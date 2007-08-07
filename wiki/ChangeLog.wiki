@@ -1,0 +1,12 @@
+=CHANGELOG=
+
+ * 0.01    [stepwhite] Initial release 
+ * 0.02    [nervegas] Implemented frame skip
+ * 0.03    [nervegas] Rewrote rendering routines using CoreSurface
+ * 0.04    [nervegas] Added multi-touch support to controller
+ * 0.05    [nervegas] Further optimizations
+ * 0.06    [nervegas] Corrected color palette
+ * 0.07    [nervegas] Further controller improvements (dragging, etc)
+ * 0.08    [nervegas] Further controller improvements (fixed disconnect, etc)
+
+
