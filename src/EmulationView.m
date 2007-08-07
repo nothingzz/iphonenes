@@ -1,10 +1,21 @@
-//
-//  EmulationView.m
-//  InfoNes iPhone
-//
-//  Created by Steve White on 8/04/07.
-//  Copyright 2007 Steve White. All rights reserved.
-//
+/*
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; version 2
+ of the License.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+*/
+
 #import "EmulationView.h"
 #include "InfoNES/InfoNES.h"
 #include "InfoNES_iPhone.h"
@@ -14,20 +25,20 @@ extern char emuThread;
 
 @implementation EmulationView
 - (id)initWithFrame:(CGRect)frame {
-	if ((self == [super initWithFrame:frame])!=nil) {
-		_controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, frame.size.height-119, frame.size.width, 119)];
+    if ((self == [super initWithFrame:frame])!=nil) {
+        _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, frame.size.height-119, frame.size.width, 119)];
 
-		int width = 256;
-		int height = 240;
-		int xOffset = floor((frame.size.width-width)/2);
-		int yOffset = floor((frame.size.height-119-height)/2);
+        int width = 256;
+        int height = 240;
+        int xOffset = floor((frame.size.width-width)/2);
+        int yOffset = floor((frame.size.height-119-height)/2);
 
-		_screenView = [[ScreenView alloc] initWithFrame: CGRectMake(xOffset, yOffset, width, height)];
+        _screenView = [[ScreenView alloc] initWithFrame: CGRectMake(xOffset, yOffset, width, height)];
 
-		[self addSubview: _controller];
-		[self addSubview: _screenView];
-	}
-	return self;
+        [self addSubview: _controller];
+        [self addSubview: _screenView];
+    }
+    return self;
 }
 
 - (void)dealloc {
@@ -40,7 +51,7 @@ extern char emuThread;
 }
 
 - (void)stopEmulator {
-	dwKeySystem |= 1; //PAD_SYS_QUIT;
+	dwKeySystem |= 1; /* PAD_SYS_QUIT */
 	emuThread = -1;
 	pthread_join(emulation_tid, NULL);
 	dwKeySystem = 0;
@@ -48,7 +59,6 @@ extern char emuThread;
 
 - (BOOL)loadROM: (NSString *)path {
 	FILE *fp;
-
 	/* Open ROM file */
 	fp = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "rb" );
 	if (fp == NULL)

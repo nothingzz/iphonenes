@@ -1,0 +1,44 @@
+NES.app
+NES Emulator for iPhone
+
+Core: InfoNES Project ( based on pNesX ) 
+Code: stepwhite, nervegas, nightwatch
+
+BUILDING
+
+Compile using 'make'. You will need the arm-apple-darwn toolchain. See:
+	http://iphone.fiveforty.net/wiki/index.php/Toolchain_Project
+
+This will create a new NES.app package in ./build. 
+
+Upload entire NES.app directory into /Applications folder on iPhone and reboot
+the iPhone. It should automatically detect the application and add it to the
+springboard. 
+
+CHANGELOG
+
+0.01	[stepwhite] Initial release 
+0.02	[nervegas] Implemented frame skip
+0.03	[nervegas] Rewrote rendering routines using CoreSurface
+0.04	[nervegas] Added multi-touch support to controller
+0.05	[nervegas] Further optimizations
+0.06	[nervegas] Corrected color palette
+0.07	[nervegas] Further controller improvements (dragging, etc)
+0.08	[nervegas] Further controller improvements (fixed disconnect, etc)
+
+LICENSE
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; version 2
+of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+

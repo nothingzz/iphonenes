@@ -1,17 +1,33 @@
-//
-//  InfoNES_iPhone.c
-//  InfoNes iPhone
-//
-//  Created by Steve White on 8/05/07.
-//  Copyright 2007 Steve White. All rights reserved.
-//
+/*
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; version 2
+ of the License.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+*/
+
+#import <CoreSurface/CoreSurface.h>
+#include "InfoNES/InfoNES_Types.h"
 #include "InfoNES/InfoNES.h"
 #include <string.h>
 #include <stdio.h>
+#include <pthread.h>
 
-// From ScreenView.h
 extern void updateScreen();
-extern unsigned char *screen;
+extern CoreSurfaceBufferRef screenSurface;
+
+extern pthread_cond_t screenUpdateLock;
+extern pthread_mutex_t screenUpdateMutex;
 
 unsigned long dwKeyPad1;
 unsigned long dwKeyPad2;
@@ -32,76 +48,82 @@ WORD NesPalette[ 64 ] =
 char emuThread;
 
 int InfoNES_ReadRom( const char *pszFileName ) {
-//printf("InfoNES_ReadROM\n");
+
 	return 0;
 }
 
 void InfoNES_ReleaseRom() {
-//printf("InfoNES_ReleaseRom\n");
+
 }
 
 void *InfoNES_MemoryCopy( void *dest, const void *src, int count ) {
-//printf("InfoNES_MemoryCopy\n");
+
 	memcpy( dest, src, count );
 	return dest;
 }
 
 void *InfoNES_MemorySet(void *dest, int c, int count) {
-//printf("InfoNES_MemorySet\n");
+
 	memset(dest, c, count);
 	return dest;
 }
 
 void InfoNES_LoadFrame() {
-//printf("InfoNES_LoadFrame\n");
-	unsigned char *c;
-	c = screen;
-	int x, y,i;
-	for (y=240; y!=-1; y--) {
-		i = 256 * y;
-		for (x=0; x<256; x++) {
-			*c++ = (unsigned char)WorkFrame[i+x];
-		}
-	}
-	updateScreen();
+    unsigned short *c = CoreSurfaceBufferGetBaseAddress(screenSurface);
+    int x, y, i = 0;
+
+    pthread_mutex_lock(&screenUpdateMutex);
+    for (y=0; y < 240; y++)
+    {
+        for (x=0; x<256; x++) {
+            c[i++] = NesPalette[WorkFrame[(256*y)+x]];
+        }
+    }
+    pthread_mutex_unlock(&screenUpdateMutex);
+    updateScreen();
 }
 
 void InfoNES_PadState( DWORD *pdwPad1, DWORD *pdwPad2, DWORD *pdwSystem ) {
-//printf("InfoNES_PadState dwKeyPad1=%i, dwKeySystem=%i\n", dwKeyPad1, dwKeySystem);
+
 	*pdwPad1 = dwKeyPad1;
 	*pdwPad2 = 0;
 	*pdwSystem = dwKeySystem;
 }
 
 void InfoNES_SoundInit( void ) {
-//printf("InfoNES_SoundInit\n");
+
 }
 
-int InfoNES_SoundOpen( int samples_per_sync, int sample_rate ) {
-//printf("InfoNES_SoundOpen\n");
+int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
+
 	return 1;
 }
 
-void InfoNES_SoundClose( void ) {
-//printf("InfoNES_SoundClose\n");
+void InfoNES_SoundClose(void) {
+
 }
 
-void InfoNES_SoundOutput( int samples, BYTE *wave1, BYTE *wave2, BYTE *wave3, BYTE *wave4, BYTE *wave5 ) {
-//printf("InfoNES_SoundOuput\n");
+void InfoNES_SoundOutput(
+  int samples,
+  BYTE *wave1,
+  BYTE *wave2,
+  BYTE *wave3,
+  BYTE *wave4,
+  BYTE *wave5 ) 
+{
 
 }
 
 void InfoNES_Wait() {
-//printf("InfoNES_Wait\n");
+
 }
 
 void InfoNES_MessageBox( char *pszMsg, ... ) {
-//printf("InfoNES_MessageBox\n");
 
 }
 
 int InfoNES_Menu() {
-printf("InfoNES_Menu returning %i\n",emuThread);
+
 	return emuThread;
 }
 
@@ -110,5 +132,4 @@ void *emulation_thread(void *args) {
 	dwKeySystem = 0;
 	InfoNES_Reset();
 	InfoNES_Main();
-	printf("emulation_thread exiting..\n");
 }
