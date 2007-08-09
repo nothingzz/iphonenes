@@ -20,3 +20,4 @@
  * 0.18 [nervegas] Fixed minor issue with orientation flip, added wheat to cool
  * 0.19 [nervegas] Improved orientation transitions
  * 0.20 [nervegas] Changes to multitouch (see notes), added DEBUG, old icon
+ * 0.20.1 [stepwhite] Added hidden diagonal controls (i.e. up&left, up&right). Added SHOW_HITSPOT. 
