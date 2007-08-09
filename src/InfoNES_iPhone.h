@@ -33,8 +33,4 @@ void InfoNES_MessageBox( char *pszMsg, ... );
 int InfoNES_Menu();
 void *emulation_thread(void *args);
 
-#ifdef COREAUDIO
-static OSStatus AudioOutputProc( AudioDeviceID inDevice, const AudioTimeStamp* inNow, const AudioBufferList* inInputData, const AudioTimeStamp* inInputTime, AudioBufferList* outOutputData, const AudioTimeStamp* inOutputTime, void* inClientData);
-#endif
-
 #endif

@@ -17,6 +17,7 @@
 */
 
 #import "MainView.h"
+#import "CoreAudio.h"
 #include "InfoNES/InfoNES.h"
 #include "InfoNES_iPhone.h"
 
@@ -24,12 +25,17 @@ int __screenOrientation;
 
 extern unsigned long dwKeySystem;
 extern char emuThread;
+extern AudioDeviceID defaultOutputDevice, basebandDevice;
+int audioIsSpeaker;
 
 @implementation MainView 
 - (id)initWithFrame:(struct CGRect)rect {
 	if ((self == [super initWithFrame: rect]) != nil) {
                 float offset = 0.0;
                 int screenOrientation = [UIHardware deviceOrientation: YES];
+                audioIsSpeaker = 1;
+
+                [UIHardware setSpeakerPhoneEnabled: YES];
           
                 if (screenOrientation != 3) {
                     offset = 48.0;
@@ -90,8 +96,19 @@ extern char emuThread;
 			if (_browsing) {
 				[_browser reloadData];
 			} else {
-				[self stopEmulator];
-				[self startEmulator];
+                            InfoNES_SoundClose();
+                            if (!audioIsSpeaker) {
+                                [UIHardware setSpeakerPhoneEnabled: YES];
+                                audioIsSpeaker = 1;
+                                if (screenOrientation != 3)
+                                    [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Speaker" leftBack: YES];
+                            } else {
+                                [UIHardware setSpeakerPhoneEnabled: NO];
+                                audioIsSpeaker = 0;
+                                if (screenOrientation != 3)
+                                    [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Headset" leftBack: YES];
+                            }
+                            InfoNES_SoundOpen(0, 0);
 			}
 			break;
 		case 1:	
@@ -113,8 +130,13 @@ extern char emuThread;
 
 
 		[_transitionView transition:1 toView:_emuView];
-                if (screenOrientation != 3)
-                    [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
+                if (screenOrientation != 3) {
+                    if (!audioIsSpeaker) {
+                        [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Headset" leftBack: YES];
+                    } else {
+                        [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Speaker" leftBack: YES];
+                    }
+                }
 		_browsing = NO;
 		[self startEmulator];
 
@@ -173,10 +195,15 @@ extern char emuThread;
     } else {
         [ self addSubview: _navBar ];
 
-        if (!_browsing)
-            [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
-        else
+        if (!_browsing) {
+            if (!audioIsSpeaker) {
+                [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Headset" leftBack: YES];
+            } else {
+                [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Speaker" leftBack: YES];
+            }
+        } else {
             [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
+        }
     }
 }
 
