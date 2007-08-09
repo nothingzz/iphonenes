@@ -2,7 +2,8 @@ NES.app
 NES Emulator for iPhone
 
 Core: InfoNES Project ( based on pNesX ) 
-Code: stepwhite, nervegas, nightwatch
+Code: stepwhite, nervegas
+Help: nightwatch (CoreSurfaces), bwhiteman (CoreAudio)
 
 BUILDING
 
@@ -25,6 +26,9 @@ CHANGELOG
 0.06	[nervegas] Corrected color palette
 0.07	[nervegas] Further controller improvements (dragging, etc)
 0.08	[nervegas] Further controller improvements (fixed disconnect, etc)
+0.09	[nervegas] Preliminary sound support
+
+NOTE: Sound required that you disable mediaserverd, and only works through the headphones.
 
 LICENSE
 

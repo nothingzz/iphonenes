@@ -19,9 +19,12 @@
 #import <CoreSurface/CoreSurface.h>
 #include "InfoNES/InfoNES_Types.h"
 #include "InfoNES/InfoNES.h"
+#include "CoreAudio.h"
+#include "InfoNES_iPhone.h"
 #include <string.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <sys/select.h>
 
 extern void updateScreen();
 extern CoreSurfaceBufferRef screenSurface;
@@ -29,9 +32,17 @@ extern CoreSurfaceBufferRef screenSurface;
 extern pthread_cond_t screenUpdateLock;
 extern pthread_mutex_t screenUpdateMutex;
 
+AudioDeviceID defaultInputDevice, defaultOutputDevice;
+AudioStreamBasicDescription deviceFormat;
+
 unsigned long dwKeyPad1;
 unsigned long dwKeyPad2;
 unsigned long dwKeySystem;
+
+int final_wave[1024];
+int waveptr;
+int sound_fd;
+int wavflag;
 
 WORD NesPalette[ 64 ] =
 {
@@ -94,13 +105,72 @@ void InfoNES_SoundInit( void ) {
 
 }
 
-int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
 
-	return 1;
+static OSStatus AudioOutputProc(
+    AudioDeviceID inDevice,
+    const AudioTimeStamp* inNow,
+    const AudioBufferList* inInputData,
+    const AudioTimeStamp* inInputTime,
+    AudioBufferList* outOutputData,
+    const AudioTimeStamp* inOutputTime,
+    void* inClientData)
+{
+    int i;
+    AudioBuffer *outputBuffer = &outOutputData->mBuffers[0];
+    unsigned long frameCount = outputBuffer->mDataByteSize 
+                            / (outputBuffer->mNumberChannels * sizeof(int));
+    int *coreAudioBuffer = (int *) outputBuffer->mData;
+
+    if (wavflag) {
+        int sample;
+        int playptr = ((wavflag-1)<<9);
+        for(i=0;i<frameCount*2;i+=2) {
+            sample = final_wave[playptr];
+            coreAudioBuffer[i] =   sample;
+            coreAudioBuffer[i+1] = sample;
+            playptr++;
+        }
+        wavflag = 0;
+    }
+    return noErr;
+}
+
+
+int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
+    UInt32 propsize = 0;
+    int isInput = 0, count;
+    OSErr err = 0;
+    double sampleRate = 44100.0, actualSampleRate;
+    FILE *f;
+    waveptr = 0;
+    wavflag = 0;
+
+    propsize = sizeof(AudioDeviceID);
+    AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
+        &propsize, &defaultInputDevice);
+    AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+        &propsize, &defaultOutputDevice);
+
+    propsize = sizeof(double);
+    AudioDeviceSetProperty(defaultOutputDevice, 0, 0, isInput,
+        kAudioDevicePropertyNominalSampleRate, propsize, &sampleRate);
+    AudioDeviceGetProperty(defaultOutputDevice, 0, isInput,
+        kAudioDevicePropertyNominalSampleRate, &propsize, &actualSampleRate);
+
+    err = AudioDeviceAddIOProc(defaultOutputDevice, AudioOutputProc, 0);
+    if (err) 
+      return 1;
+
+    err = AudioDeviceStart(defaultOutputDevice, AudioOutputProc);
+    if (err) 
+      return 1;
+
+    return 0;
 }
 
 void InfoNES_SoundClose(void) {
 
+    AudioDeviceStop(defaultOutputDevice, AudioOutputProc);
 }
 
 void InfoNES_SoundOutput(
@@ -111,7 +181,24 @@ void InfoNES_SoundOutput(
   BYTE *wave4,
   BYTE *wave5 ) 
 {
+  int i;
 
+  for (i = 0; i < samples; i++)
+  {
+    int mix = (((wave1[i] + wave2[i] + wave3[i] + wave4[i] + wave5[i]) / 5) - 127) * 256;
+    final_wave [ waveptr ] = mix;
+
+    waveptr++;
+    if ( waveptr == 1024 )
+    {
+      waveptr = 0;
+      wavflag = 2;
+    }
+    else if ( waveptr == 512 )
+    {
+      wavflag = 1;
+    }
+  }
 }
 
 void InfoNES_Wait() {

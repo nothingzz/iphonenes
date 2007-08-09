@@ -1,6 +1,6 @@
 CC=arm-apple-darwin-cc 
 LD=$(CC)
-LDFLAGS=-lobjc -framework CoreFoundation -framework Foundation -framework UIKit -framework LayerKit -framework CoreGraphics -larmfp -framework GraphicsServices -framework CoreSurface -Isrc
+LDFLAGS=-lobjc -framework CoreFoundation -framework Foundation -framework UIKit -framework LayerKit -framework CoreGraphics -larmfp -framework GraphicsServices -framework CoreSurface -framework CoreAudio -Isrc
 
 all:	NES package
 
