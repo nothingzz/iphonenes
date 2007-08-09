@@ -36,7 +36,7 @@ extern unsigned long dwKeyPad1;
                     A = CGRectMake(144, 401, 59, 59);
                     Up = CGRectMake(164, 26, 38, 46);
                     Down = CGRectMake(89, 28, 32, 42);
-                    Left = CGRectMake(122, 0, 40, 42);
+                    Left = CGRectMake(122, 0, 40, 40);
                     Right = CGRectMake(122, 52, 40, 42);
                     Select = CGRectMake(16, 8, 32, 40);
                     Start = CGRectMake(16, 52, 32, 40);
@@ -138,6 +138,12 @@ extern unsigned long dwKeyPad1;
 	int button = [self controllerButtonPressed: event];
         if (button)
             dwKeyPad1 = button;
+
+#ifdef DEBUG
+        FILE *f = fopen("/tmp/NES.debug", "a");
+        fprintf(f, "ControllerView.mouseDown(%d) dwKeyPad1:%d\n", button, dwKeyPad1);
+        fclose(f);
+#endif
 }
 
 - (void)mouseDragged:(GSEvent *)event {
@@ -166,6 +172,12 @@ extern unsigned long dwKeyPad1;
                    dwKeyPad1 &= ~BIT_01;
             }
         }
+
+#ifdef DEBUG
+        FILE *f = fopen("/tmp/NES.debug", "a");
+        fprintf(f, "ControllerView.mouseDragged(%d) dwKeyPad1:%d\n", button, dwKeyPad1);
+        fclose(f);
+#endif
 }
 - (void)mouseUp:(GSEvent *)event {
         int button = [self controllerButtonPressed: event];
@@ -174,9 +186,15 @@ extern unsigned long dwKeyPad1;
             dwKeyPad1 = 0;
         else 
             if (dwKeyPad1 > 16 && dwKeyPad1 % 8 != 0)
-                dwKeyPad1 = 0;
+                dwKeyPad1 = button;
             else
                 dwKeyPad1 &= ~button;
+
+#ifdef DEBUG
+        FILE *f = fopen("/tmp/NES.debug", "a");
+        fprintf(f, "ControllerView.mouseUp(%d) dwKeyPad1:%d\n", button, dwKeyPad1);
+        fclose(f);
+#endif
 }
 
 @end
