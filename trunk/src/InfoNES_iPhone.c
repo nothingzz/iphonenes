@@ -29,6 +29,7 @@
 
 extern void updateScreen();
 extern CoreSurfaceBufferRef screenSurface;
+extern int __screenOrientation;
 
 extern pthread_cond_t screenUpdateLock;
 extern pthread_mutex_t screenUpdateMutex;
@@ -87,15 +88,22 @@ void InfoNES_LoadFrame() {
     c = CoreSurfaceBufferGetBaseAddress(screenSurface);
 
     pthread_mutex_lock(&screenUpdateMutex);
-    for (y=0; y < 240; y++)
-    {
-        for (x=0; x<256; x++) {
-#ifdef LANDSCAPE
-            c[ ((x+1) * 240) - (y+1) ] = NesPalette[WorkFrame[(256*y)+x]];
-#else
-            c[i++] = NesPalette[WorkFrame[(256*y)+x]];
-#endif
 
+    if (__screenOrientation == 3) {
+
+        for (y=0; y < 240; y++)
+        {
+            for (x=0; x<256; x++) {
+                    c[ ((x+1) * 240) - (y+1) ] = NesPalette[WorkFrame[(256*y)+x]];
+            }
+        }
+    } else {
+
+        for (y=0; y < 240; y++)
+        {
+            for (x=0; x<256; x++) {
+                c[i++] = NesPalette[WorkFrame[(256*y)+x]];
+            }
         }
     }
     pthread_mutex_unlock(&screenUpdateMutex);

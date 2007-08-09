@@ -17,6 +17,7 @@
 */
 
 #import "EmulationView.h"
+#import "ControllerView.h"
 #include "InfoNES/InfoNES.h"
 #include "InfoNES_iPhone.h"
 
@@ -26,24 +27,31 @@ extern char emuThread;
 @implementation EmulationView
 - (id)initWithFrame:(CGRect)frame {
     if ((self == [super initWithFrame:frame])!=nil) {
-#ifdef LANDSCAPE
-        _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, 0, frame.size.width, 460)];
-#else
-        _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, frame.size.height-119, frame.size.width, 119)];
-#endif
+        int screenOrientation = [UIHardware deviceOrientation: YES];
 
+        FILE *f = fopen("/tmp/out", "a");
+        fprintf(f, "orientation: %d\n", screenOrientation);
+        fclose(f);
 
-#ifdef LANDSCAPE
-        int width = 240;
-        int height = 256;
-        int xOffset = floor((frame.size.width-width)/2);
-        int yOffset = 122;
-#else
-	int width = 256;
-	int height = 240;
-        int xOffset = floor((frame.size.width-width)/2);
-        int yOffset = floor((frame.size.height-119-height)/2);
-#endif
+        if (screenOrientation == 3) 
+            _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, 0, frame.size.width, 460)];
+        else
+            _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, frame.size.height-119, frame.size.width, 119)];
+
+        int width, height, xOffset, yOffset;
+        
+        if (screenOrientation == 3) {
+            width = 240;
+            height = 256;
+            xOffset = floor((frame.size.width-width)/2);
+            yOffset = 122;
+        } else {
+	    width = 256;
+	    height = 240;
+            xOffset = floor((frame.size.width-width)/2);
+            yOffset = floor((frame.size.height-119-height)/2);
+        }
+
         _screenView = [[ScreenView alloc] initWithFrame: CGRectMake(xOffset, yOffset, width, height)];
 
         [self addSubview: _controller];
@@ -54,18 +62,6 @@ extern char emuThread;
 
 - (void)dealloc {
 	[super dealloc];
-}
-
-- (void)startEmulator {
-	emuThread = 0;
-	pthread_create(&emulation_tid, NULL, emulation_thread, NULL);
-}
-
-- (void)stopEmulator {
-	dwKeySystem |= 1; /* PAD_SYS_QUIT */
-	emuThread = -1;
-	pthread_join(emulation_tid, NULL);
-	dwKeySystem = 0;
 }
 
 - (BOOL)loadROM: (NSString *)path {
@@ -103,10 +99,17 @@ extern char emuThread;
 	CGContextRef ctx = UICurrentContext();
 	float black[4] = {0, 0, 0, 1};
 	CGContextSetFillColor(ctx, black);
-#ifdef LANDSCAPE
-	CGContextFillRect(ctx, CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-60)); 
-#else
-        CGContextFillRect(ctx, CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-119)); 
-#endif
+        int screenOrientation = [UIHardware deviceOrientation: YES];
+
+        if (screenOrientation == 3)
+            CGContextFillRect(ctx, CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-60)); 
+        else
+            CGContextFillRect(ctx, CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-119)); 
 }
+
+- (void)orientationChange:(int)newOrientation {
+    _orientation = newOrientation;
+}               
+
+
 @end

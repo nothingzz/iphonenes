@@ -18,13 +18,18 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "MainView.h"
 
 @interface NESApp : UIApplication
 {
     UIWindow *_window;
+    MainView *_mainView;
+    int _screenOrientation;
+    int _previousScreenOrientation;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 - (void)applicationWillTerminate;
+- (void)deviceOrientationChanged:(GSEvent *)event;
 
 @end
