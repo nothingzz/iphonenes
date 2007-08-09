@@ -52,6 +52,5 @@
 - (void)mouseDown:(struct __GSEvent *)event;
 - (void)mouseDragged:(struct __GSEvent *)event;
 - (void)mouseUp:(struct __GSEvent *)event;
-- (void)mouseMoved:(struct __GSEvent *)event;
 
 @end

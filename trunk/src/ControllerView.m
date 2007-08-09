@@ -27,14 +27,14 @@ extern unsigned long dwKeyPad1;
 - (id)initWithFrame:(CGRect)frame {
 	if ((self == [super initWithFrame:frame])!=nil) {
 		_controllerImage = [UIImage applicationImageNamed:@"controller.png"];
-		Up = CGRectMake(37, 0, 36, 36);
-		Down = CGRectMake(37, 60, 36, 36);
-		Left = CGRectMake(5, 33, 31, 36);
-		Right = CGRectMake(68, 33, 31, 36);
+		Up = CGRectMake(34, 0, 39, 33);
+		Down = CGRectMake(34, 65, 39, 33);
+		Left = CGRectMake(0, 31, 43, 38);
+		Right = CGRectMake(63, 31, 43, 38);
 		Select = CGRectMake(110, 60, 36, 20);
 		Start = CGRectMake(155, 60, 36, 20);
-		B = CGRectMake(198, 21, 54, 54);
-		A = CGRectMake(260, 21, 54, 54);
+		B = CGRectMake(197, 27, 56, 72);
+		A = CGRectMake(258, 27, 56, 72);
 		_fixed = false;
 	}
 	return self;
@@ -87,25 +87,25 @@ extern unsigned long dwKeyPad1;
 	if (CGRectContainsPoint(A, point)) {
 		button |= BIT_00;
 	}
-	if (CGRectContainsPoint(B, point)) {
+	else if (CGRectContainsPoint(B, point)) {
 		button |= BIT_01;
 	}
-	if (CGRectContainsPoint(Up, point)) {
+	else if (CGRectContainsPoint(Up, point)) {
 		button |= BIT_04;
 	}
-	if (CGRectContainsPoint(Down, point)) {
+	else if (CGRectContainsPoint(Down, point)) {
 		button |= BIT_05;
 	}
-	if (CGRectContainsPoint(Left, point)) {
+	else if (CGRectContainsPoint(Left, point)) {
 		button |= BIT_06;
 	}
-	if (CGRectContainsPoint(Right, point)) {
+	else if (CGRectContainsPoint(Right, point)) {
 		button |= BIT_07;
 	}
-	if (CGRectContainsPoint(Select, point)) {
+	else if (CGRectContainsPoint(Select, point)) {
 		button |= BIT_02;
 	}
-	if (CGRectContainsPoint(Start, point)) {
+	else if (CGRectContainsPoint(Start, point)) {
 		button |= BIT_03;
 	}
 	return button;
@@ -113,21 +113,47 @@ extern unsigned long dwKeyPad1;
 
 - (void)mouseDown:(GSEvent *)event {
 	int button = [self controllerButtonPressed: event];
-	dwKeyPad1 = button;
+        if (button)
+            dwKeyPad1 = button;
 }
 
 - (void)mouseDragged:(GSEvent *)event {
         int button = [self controllerButtonPressed: event];
-        dwKeyPad1 = button;
+        if (!button)
+            return;
+
+        if (!(dwKeyPad1 & button)) {
+            dwKeyPad1 |= button;
+            if (button >= BIT_04 && button <= BIT_07)
+            {
+                // Reset directional pad
+                if (button != BIT_04)
+                    dwKeyPad1 &= ~BIT_04;
+                if (button != BIT_05)
+                    dwKeyPad1 &= ~BIT_05;
+                if (button != BIT_06)
+                    dwKeyPad1 &= ~BIT_06;
+                if (button != BIT_07)
+                    dwKeyPad1 &= ~BIT_07;
+            } else if (button == BIT_00 || button == BIT_01) 
+            {
+                if (button != BIT_00)
+                   dwKeyPad1 &= ~BIT_00;
+                else
+                   dwKeyPad1 &= ~BIT_01;
+            }
+        }
 }
 - (void)mouseUp:(GSEvent *)event {
         int button = [self controllerButtonPressed: event];
-        dwKeyPad1 &= ~button;
-}
 
-- (void)mouseMoved:(GSEvent *)event {
-        int button = [self controllerButtonPressed: event];
-        dwKeyPad1 = button;
+        if (!button)
+            dwKeyPad1 = 0;
+        else 
+            if (dwKeyPad1 > 16 && dwKeyPad1 % 8 != 0)
+                dwKeyPad1 = 0;
+            else
+                dwKeyPad1 &= ~button;
 }
 
 @end
