@@ -40,10 +40,10 @@ unsigned long dwKeyPad1;
 unsigned long dwKeyPad2;
 unsigned long dwKeySystem;
 
-int final_wave[1024];
-int waveptr;
-int sound_fd;
-int wavflag;
+#define WAVE_BUFFER_SIZE 20480
+float waveBuffer[WAVE_BUFFER_SIZE];
+int writePtr;
+int playPtr;
 
 WORD NesPalette[ 64 ] =
 {
@@ -115,30 +115,29 @@ static OSStatus AudioOutputProc(
     int i;
     AudioBuffer *outputBuffer = &outOutputData->mBuffers[0];
     unsigned long frameCount = outputBuffer->mDataByteSize
-                            / (outputBuffer->mNumberChannels * sizeof(int));
-    int *coreAudioBuffer = (int *) outputBuffer->mData;
+                            / (outputBuffer->mNumberChannels * sizeof(short));
+    short *coreAudioBuffer = (short *) outputBuffer->mData;
 
-    if (wavflag) {
-        int sample;
-        int playptr = ((wavflag-1)<<9);
+    if (writePtr > playPtr+frameCount || writePtr < playPtr) {
+        short sample;
         for(i=0;i<frameCount*2;i+=2) {
-            sample = final_wave[playptr];
+            sample = (int)(waveBuffer[playPtr] * 127.0);
             coreAudioBuffer[i] =   sample;
             coreAudioBuffer[i+1] = sample;
-            playptr++;
+            playPtr++;
         }
-        wavflag = 0;
+        if (playPtr == WAVE_BUFFER_SIZE) 
+            playPtr = 0;
     }
     return noErr;
 }
 
 void InfoNES_SoundInit( void ) {
-
     UInt32 propsize = 0;
     int isInput = 0, count;
     double sampleRate = 44100.0, actualSampleRate;
-    waveptr = 0;
-    wavflag = 0;
+    writePtr = 0;
+    playPtr = 0;
 
     propsize = sizeof(AudioDeviceID);
     AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
@@ -182,19 +181,11 @@ void InfoNES_SoundOutput(
 
   for (i = 0; i < samples; i++)
   {
-    int mix = (((wave1[i] + wave2[i] + wave3[i] + wave4[i] + wave5[i]) / 5) - 127) * 256;
-    final_wave [ waveptr ] = mix;
-
-    waveptr++;
-    if ( waveptr == 1024 )
-    {
-      waveptr = 0;
-      wavflag = 2;
-    }
-    else if ( waveptr == 512 )
-    {
-      wavflag = 1;
-    }
+    waveBuffer[writePtr] = 
+        (wave1[i] + wave2[i] + wave3[i] + wave4[i] + wave5[i]) / 5; 
+    writePtr++;
+    if (writePtr == WAVE_BUFFER_SIZE) 
+        writePtr = 0;
   }
 }
 

@@ -1,6 +1,6 @@
 NES.app
 NES Emulator for iPhone
-Version 0.10
+Version 0.11
 
 Core: InfoNES Project ( based on pNesX ) 
 Code: stepwhite, nervegas
@@ -29,6 +29,7 @@ CHANGELOG
 0.08	[nervegas] Further controller improvements (fixed disconnect, etc)
 0.09	[nervegas] Preliminary sound support - see notes below
 0.10	[nervegas] Fixed crashing when returning to file list
+0.11	[nervegas] Improved sound quality, both earbugs work now, buffering+
 
 NOTE ON SOUND
 Sound required that you disable mediaserverd, and only works through the 
