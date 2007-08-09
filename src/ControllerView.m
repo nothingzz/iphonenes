@@ -40,8 +40,12 @@ extern unsigned long dwKeyPad1;
                     Right = CGRectMake(122, 52, 40, 42);
                     Select = CGRectMake(16, 8, 32, 40);
                     Start = CGRectMake(16, 52, 32, 40);
-                } else {
 
+                    UpLeft = CGRectMake(164, 0, 38, 25); 
+                    UpRight = CGRectMake(164, 73, 38, 24);
+                    DownLeft = CGRectMake(89, 0, 32, 26);
+                    DownRight = CGRectMake(89, 72, 32, 26);
+                } else {
                    _controllerImage = [UIImage applicationImageNamed:@"controller_portrait.png"];
                    Up = CGRectMake(34, 0, 39, 33);
                    Down = CGRectMake(34, 65, 39, 33);
@@ -51,6 +55,11 @@ extern unsigned long dwKeyPad1;
                    Start = CGRectMake(155, 60, 36, 20);
                    B = CGRectMake(197, 27, 56, 72);
                    A = CGRectMake(258, 27, 56, 72);
+
+                   UpLeft = CGRectMake(0, 0, 34, 31);
+                   UpRight = CGRectMake(73, 0, 34, 31);
+                   DownLeft = CGRectMake(0, 69, 34, 31);
+                   DownRight = CGRectMake(73, 69, 34, 31);
                }
 
 		_fixed = false;
@@ -75,6 +84,32 @@ extern unsigned long dwKeyPad1;
             rect2.size.height = 460;
 
 	[_controllerImage draw1PartImageInRect: rect2];
+
+	
+#ifdef SHOW_HITSPOT
+	CGContextRef ctx = UICurrentContext();
+	float red[4] = {1, 0, 0, 1};
+	float green[4] = {0, 1, 0, 1};
+	float blue[4] = {0, 0, 1, 1};
+	CGContextSetFillColor(ctx, red);
+	CGContextFillRect(ctx, UpLeft);
+	CGContextFillRect(ctx, UpRight);
+	CGContextFillRect(ctx, DownLeft);
+	CGContextFillRect(ctx, DownRight);
+
+	CGContextSetFillColor(ctx, blue);
+	CGContextFillRect(ctx, Up);
+	CGContextFillRect(ctx, Down);
+	CGContextFillRect(ctx, Left);
+	CGContextFillRect(ctx, Right);
+
+	CGContextSetFillColor(ctx, green);
+	CGContextFillRect(ctx, Select);
+	CGContextFillRect(ctx, Start);
+	CGContextFillRect(ctx, A);
+	CGContextFillRect(ctx, B);
+#endif
+
 	[self fixRects];
 }
 
@@ -98,6 +133,11 @@ extern unsigned long dwKeyPad1;
 	Start = [self convertRect: Start toView: mainView];
 	B = [self convertRect: B toView: mainView];
 	A = [self convertRect: A toView: mainView];
+
+	UpLeft = [self convertRect: UpLeft toView: mainView];
+	UpRight = [self convertRect: UpRight toView: mainView];
+	DownLeft = [self convertRect: DownLeft toView: mainView];
+	DownRight = [self convertRect: DownRight toView: mainView];
 
 	_fixed = YES;
 }
@@ -123,6 +163,22 @@ extern unsigned long dwKeyPad1;
 		button |= BIT_06;
 	}
 	else if (CGRectContainsPoint(Right, point)) {
+		button |= BIT_07;
+	}
+	else if (CGRectContainsPoint(UpLeft, point)) {
+		button |= BIT_04;
+		button |= BIT_06;
+	}
+	else if (CGRectContainsPoint(UpRight, point)) {
+		button |= BIT_04;
+		button |= BIT_07;
+	}
+	else if (CGRectContainsPoint(DownLeft, point)) {
+		button |= BIT_05;
+		button |= BIT_06;
+	}
+	else if (CGRectContainsPoint(DownRight, point)) {
+		button |= BIT_05;
 		button |= BIT_07;
 	}
 	else if (CGRectContainsPoint(Select, point)) {
