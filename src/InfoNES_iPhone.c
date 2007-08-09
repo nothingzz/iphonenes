@@ -178,7 +178,6 @@ void InfoNES_SoundOutput(
   BYTE *wave5 ) 
 {
   int i;
-
   for (i = 0; i < samples; i++)
   {
     waveBuffer[writePtr] = 

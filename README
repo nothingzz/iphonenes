@@ -1,6 +1,6 @@
 NES.app
 NES Emulator for iPhone
-Version 0.11
+Version 0.13
 
 Core: InfoNES Project ( based on pNesX ) 
 Code: stepwhite, nervegas
@@ -30,16 +30,28 @@ CHANGELOG
 0.09	[nervegas] Preliminary sound support - see notes below
 0.10	[nervegas] Fixed crashing when returning to file list
 0.11	[nervegas] Improved sound quality, both earbugs work now, buffering+
+0.12	[nervegas] Enlarged controllers, improved hot spot locations
+0.13	[nergegas] Expanded on multitouch control - see notes below
 
 NOTE ON SOUND
 Sound required that you disable mediaserverd, and only works through the 
 headphones. A couple of easy aliases can be added to your .profile to disable or
 re-enable mediaserverd if you are using MobileShell:
 
-alias nosound="/bin/launchctl unload /System/Library/LaunchDaemons/coreaudiod.plist"
-alias sound="/bin/launchctl load /System/Library/LaunchDaemons/coreaudiod.plist"
+alias \
+nosound="/bin/launchctl unload /System/Library/LaunchDaemons/coreaudiod.plist"
 
-It's buggy, but it works! Watch for improvements in future releases.
+alias \
+sound="/bin/launchctl load /System/Library/LaunchDaemons/coreaudiod.plist"
+
+NOTE ON MULTITOUCH
+The multitouch reports mouseDown and mouseDragged events separately, and so
+you can run while holding 'B', for example, but the iPhone appears to get
+confused about the mouseUp event, and does not report the correct mouseUp.
+For this reason, whenever you are holding a direction + button, releasing
+the button will cause the direction to stop moving as well. I am working on
+finding a way to poll the screen to re-evaluate all the buttons, but until
+then, this is the only caveat you'll have to live with.
 
 LICENSE
 
