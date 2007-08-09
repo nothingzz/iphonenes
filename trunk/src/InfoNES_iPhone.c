@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <sys/select.h>
+#include <unistd.h>
 
 extern void updateScreen();
 extern CoreSurfaceBufferRef screenSurface;
@@ -80,8 +81,10 @@ void *InfoNES_MemorySet(void *dest, int c, int count) {
 }
 
 void InfoNES_LoadFrame() {
-    unsigned short *c = CoreSurfaceBufferGetBaseAddress(screenSurface);
+    unsigned short *c;
     int x, y, i = 0;
+
+    c = CoreSurfaceBufferGetBaseAddress(screenSurface);
 
     pthread_mutex_lock(&screenUpdateMutex);
     for (y=0; y < 240; y++)
@@ -95,16 +98,10 @@ void InfoNES_LoadFrame() {
 }
 
 void InfoNES_PadState( DWORD *pdwPad1, DWORD *pdwPad2, DWORD *pdwSystem ) {
-
 	*pdwPad1 = dwKeyPad1;
 	*pdwPad2 = 0;
 	*pdwSystem = dwKeySystem;
 }
-
-void InfoNES_SoundInit( void ) {
-
-}
-
 
 static OSStatus AudioOutputProc(
     AudioDeviceID inDevice,
@@ -117,7 +114,7 @@ static OSStatus AudioOutputProc(
 {
     int i;
     AudioBuffer *outputBuffer = &outOutputData->mBuffers[0];
-    unsigned long frameCount = outputBuffer->mDataByteSize 
+    unsigned long frameCount = outputBuffer->mDataByteSize
                             / (outputBuffer->mNumberChannels * sizeof(int));
     int *coreAudioBuffer = (int *) outputBuffer->mData;
 
@@ -135,13 +132,11 @@ static OSStatus AudioOutputProc(
     return noErr;
 }
 
+void InfoNES_SoundInit( void ) {
 
-int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
     UInt32 propsize = 0;
     int isInput = 0, count;
-    OSErr err = 0;
     double sampleRate = 44100.0, actualSampleRate;
-    FILE *f;
     waveptr = 0;
     wavflag = 0;
 
@@ -157,10 +152,12 @@ int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
     AudioDeviceGetProperty(defaultOutputDevice, 0, isInput,
         kAudioDevicePropertyNominalSampleRate, &propsize, &actualSampleRate);
 
-    err = AudioDeviceAddIOProc(defaultOutputDevice, AudioOutputProc, 0);
-    if (err) 
-      return 1;
+    AudioDeviceAddIOProc(defaultOutputDevice, AudioOutputProc, 0);
+}
 
+
+int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
+    OSErr err;
     err = AudioDeviceStart(defaultOutputDevice, AudioOutputProc);
     if (err) 
       return 1;

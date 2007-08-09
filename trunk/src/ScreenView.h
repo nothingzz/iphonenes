@@ -29,7 +29,7 @@ pthread_mutex_t screenUpdateMutex;
 @interface ScreenView : UIView 
 {
         LKLayer *screenLayer;
-        int initGraphics;
+	int initGraphics;
 }
 
 - (id)initWithFrame:(CGRect)frame;

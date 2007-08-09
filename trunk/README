@@ -1,9 +1,10 @@
 NES.app
 NES Emulator for iPhone
+Version 0.10
 
 Core: InfoNES Project ( based on pNesX ) 
 Code: stepwhite, nervegas
-Help: nightwatch (CoreSurfaces), bwhiteman (CoreAudio)
+Cool: nightwatch (CoreSurfaces), bwhiteman (CoreAudio)
 
 BUILDING
 
@@ -26,9 +27,18 @@ CHANGELOG
 0.06	[nervegas] Corrected color palette
 0.07	[nervegas] Further controller improvements (dragging, etc)
 0.08	[nervegas] Further controller improvements (fixed disconnect, etc)
-0.09	[nervegas] Preliminary sound support
+0.09	[nervegas] Preliminary sound support - see notes below
+0.10	[nervegas] Fixed crashing when returning to file list
 
-NOTE: Sound required that you disable mediaserverd, and only works through the headphones.
+NOTE ON SOUND
+Sound required that you disable mediaserverd, and only works through the 
+headphones. A couple of easy aliases can be added to your .profile to disable or
+re-enable mediaserverd if you are using MobileShell:
+
+alias nosound="/bin/launchctl unload /System/Library/LaunchDaemons/coreaudiod.plist"
+alias sound="/bin/launchctl load /System/Library/LaunchDaemons/coreaudiod.plist"
+
+It's buggy, but it works! Watch for improvements in future releases.
 
 LICENSE
 
