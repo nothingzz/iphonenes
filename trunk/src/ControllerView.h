@@ -40,6 +40,10 @@
 	CGRect B;
 	CGRect A;
 
+	CGRect UpLeft;
+	CGRect UpRight;
+	CGRect DownLeft;
+	CGRect DownRight;
 	BOOL _fixed;
 }
 
