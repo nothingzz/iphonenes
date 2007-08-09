@@ -1,6 +1,6 @@
 NES.app
 NES Emulator for iPhone
-Version 0.15
+Version 0.16
 
 Core: InfoNES Project ( based on pNesX ) 
 Code: stepwhite, nervegas
@@ -8,14 +8,27 @@ Cool: nightwatch (CoreSurfaces), bwhiteman (CoreAudio)
 
 BUILDING
 
-Compile using 'make'. You will need the arm-apple-darwn toolchain. See:
-	http://iphone.fiveforty.net/wiki/index.php/Toolchain_Project
+0. You will need to install the arm-apple-darwin toolchain. See:
+   http://iphone.fiveforty.net/wiki/index.php/Toolchain_Project
+ 
+   You will also need to apply the patches in toolchain-includes-patch.txt
+   Depending on where you've installed your includes, you may need to
+   modify this file, or provide filenames at patch time. Use like this:
 
-This will create a new NES.app package in ./build. 
+   patch -p0 < toolchain-includes-patch.txt
 
-Upload entire NES.app directory into /Applications folder on iPhone and reboot
-the iPhone. It should automatically detect the application and add it to the
-springboard. 
+1. The default compile mode is 'portrait' mode. If you prefer to build a
+   landscape version, edit Makefile and uncomment this line:
+
+   #CFLAGS = -DLANDSCAPE
+
+2. Compile using 'make'. This will create a new NES.app package in ./build. 
+
+   Upload entire NES.app directory into /Applications on the iPhone and reboot
+   the iPhone. It should automatically detect the application and add it to the
+   springboard. 
+
+3. Place your ROM files in /var/root/Media/ROMs/NES
 
 CHANGELOG
 
@@ -34,6 +47,7 @@ CHANGELOG
 0.13	[nergegas] Expanded on multitouch control - (see notes below)
 0.14 	[nervegas] Added switch for landscape build (see Makefile) 
 0.15	[nervegas] Widened landscape mode - removed navBar 
+0.16	[nervegas] added toolchain header patch / better docs
 
 NOTE ON SOUND
 Sound required that you disable mediaserverd, and only works through the 

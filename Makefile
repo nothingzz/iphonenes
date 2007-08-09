@@ -11,7 +11,6 @@ LDFLAGS = -lobjc \
           -framework CoreAudio \
           -larmfp 
 
-CFLAGS = -DPORTRAIT
 #CFLAGS = -DLANDSCAPE
 
 all:	NES package
