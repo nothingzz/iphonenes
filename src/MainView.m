@@ -96,6 +96,7 @@ extern char emuThread;
 			break;
 		case 1:	
 			if (!_browsing) {
+                                _browsing = YES;
 				[self stopEmulator];
 				[_transitionView transition:2 toView:_browser];
                                 if (screenOrientation != 3) 
@@ -136,26 +137,36 @@ extern char emuThread;
     if (screenOrientation != 3) 
         offset = 48.0;
 
-    [_emuView release];
-    [_browser release];
+    [_transitionView removeFromSuperview];
     [_transitionView release];
-    
+
+    EmulationView *_newEmuView = [[EmulationView alloc] initWithFrame:
+            CGRectMake(0, 0, _rect.size.width, _rect.size.height - offset)
+    ];
+
+    FileBrowser *_newBrowser = [[FileBrowser alloc] initWithFrame:
+            CGRectMake(0, 0, _rect.size.width, _rect.size.height - offset)
+    ];
+    [_newBrowser setPath:@"/var/root/Media/ROMs/NES/"];
+    [_newBrowser setDelegate: self];
+
     _transitionView = [[UITransitionView alloc] initWithFrame:
-            CGRectMake(_rect.origin.x, offset, _rect.size.width, _rect.size.height - offset)
+            CGRectMake(_rect.origin.x, offset, 
+                       _rect.size.width, _rect.size.height - offset)
     ];
 
-    _browser = [[FileBrowser alloc] initWithFrame:
-            CGRectMake(0, 0, _rect.size.width, _rect.size.height - offset)
-    ];
-
-    _emuView = [[EmulationView alloc] initWithFrame:
-            CGRectMake(0, 0, _rect.size.width, _rect.size.height - offset)
-    ];
-
-    [_browser setPath:@"/var/root/Media/ROMs/NES/"];
-    [_browser setDelegate: self];
     [self addSubview: _transitionView];
-    [_transitionView transition:1 toView:_browser];
+    if (!_browsing) {
+        [_transitionView transition:6 fromView: _emuView toView:_newEmuView];
+    } else {
+        [_transitionView transition:1 toView:_newBrowser];
+    }
+
+    [_emuView release];
+    _emuView = _newEmuView;
+
+    [_browser release];
+    _browser = _newBrowser;
 
     if (screenOrientation == 3) {
         [ _navBar removeFromSuperview ];
@@ -166,10 +177,6 @@ extern char emuThread;
             [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
         else
             [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
-    }
-
-    if (!_browsing) {
-        [_transitionView transition:1 toView:_emuView];
     }
 }
 
