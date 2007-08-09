@@ -1,10 +1,11 @@
 NES.app
 NES Emulator for iPhone
-Version 0.17
+Version 0.19
 
 Core: InfoNES Project ( based on pNesX ) 
 Code: stepwhite, nervegas
 Cool: nightwatch (CoreSurfaces), bwhiteman (CoreAudio), dshadow (General)
+      wheat-_ (Icon)
 
 BUILDING
 
@@ -64,6 +65,8 @@ CHANGELOG
 0.15	[nervegas] Widened landscape mode - removed navBar 
 0.16	[nervegas] added toolchain header patch / better docs
 0.17	[nervegas] Set orientation mode during game play, updated header patch
+0.18	[nervegas] Fixed minor issue with orientation flip, added wheat to cool
+0.19	[nervegas] Improved orientation transitions
 
 LICENSE
 
