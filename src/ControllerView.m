@@ -26,15 +26,28 @@ extern unsigned long dwKeyPad1;
 @implementation ControllerView
 - (id)initWithFrame:(CGRect)frame {
 	if ((self == [super initWithFrame:frame])!=nil) {
-		_controllerImage = [UIImage applicationImageNamed:@"controller.png"];
-		Up = CGRectMake(34, 0, 39, 33);
-		Down = CGRectMake(34, 65, 39, 33);
-		Left = CGRectMake(0, 31, 43, 38);
-		Right = CGRectMake(63, 31, 43, 38);
-		Select = CGRectMake(110, 60, 36, 20);
-		Start = CGRectMake(155, 60, 36, 20);
-		B = CGRectMake(197, 27, 56, 72);
-		A = CGRectMake(258, 27, 56, 72);
+#ifdef LANDSCAPE
+		_controllerImage = [UIImage applicationImageNamed:@"controller_landscape.png"];
+                B = CGRectMake(83, 353, 59, 59);
+                A = CGRectMake(144, 353, 59, 59);
+                Up = CGRectMake(164, 26, 38, 46);
+                Down = CGRectMake(89, 28, 32, 42);
+                Left = CGRectMake(122, 0, 40, 42);
+                Right = CGRectMake(122, 52, 40, 42);
+                Select = CGRectMake(16, 8, 32, 40);
+                Start = CGRectMake(16, 52, 32, 40);
+#else
+                _controllerImage = [UIImage applicationImageNamed:@"controller_portrait.png"];
+               Up = CGRectMake(34, 0, 39, 33);
+               Down = CGRectMake(34, 65, 39, 33);
+               Left = CGRectMake(0, 31, 43, 38);
+               Right = CGRectMake(63, 31, 43, 38);
+               Select = CGRectMake(110, 60, 36, 20);
+               Start = CGRectMake(155, 60, 36, 20);
+               B = CGRectMake(197, 27, 56, 72);
+               A = CGRectMake(258, 27, 56, 72);
+#endif
+
 		_fixed = false;
 	}
 	return self;
@@ -50,7 +63,12 @@ extern unsigned long dwKeyPad1;
 	rect2.origin.x = 0;
 	rect2.origin.y = 0;
 	rect2.size.width = 320;
-	rect2.size.height = 119;
+#ifdef LANDSCAPE
+	rect2.size.height = 412;
+#else
+       rect2.size.height = 119;
+#endif
+
 	[_controllerImage draw1PartImageInRect: rect2];
 	[self fixRects];
 }

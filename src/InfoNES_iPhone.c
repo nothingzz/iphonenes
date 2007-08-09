@@ -90,7 +90,12 @@ void InfoNES_LoadFrame() {
     for (y=0; y < 240; y++)
     {
         for (x=0; x<256; x++) {
+#ifdef LANDSCAPE
+            c[ ((x+1) * 240) - (y+1) ] = NesPalette[WorkFrame[(256*y)+x]];
+#else
             c[i++] = NesPalette[WorkFrame[(256*y)+x]];
+#endif
+
         }
     }
     pthread_mutex_unlock(&screenUpdateMutex);

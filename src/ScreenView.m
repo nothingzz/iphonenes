@@ -51,8 +51,13 @@ void updateScreen() {
     if (initGraphics == 0) {
         int i;
         CFMutableDictionaryRef dict;
-        int w = 256;
-        int h = 240;
+#ifdef LANDSCAPE
+        int w = 240;
+        int h = 256;
+#else
+	int w = 256;
+	int h = 240;
+#endif
         int pitch = w * 2, allocSize = 2 * w * h;
         char *pixelFormat = "555L";
         unsigned short *screen;
@@ -81,7 +86,12 @@ void updateScreen() {
         CoreSurfaceBufferLock(screenSurface, 3);
 
         screenLayer = [[LKLayer layer] retain];
+#ifdef LANDSCAPE
+        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 240.0f, 255.0f)];
+#else
         [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 256.0f, 239.0f)];
+#endif
+
         [screenLayer setContents: screenSurface];
         [screenLayer setOpaque: YES];
 //        [screenLayer setDelegate: self];

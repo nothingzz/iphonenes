@@ -86,6 +86,7 @@
 		[_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
 		_browsing = NO;
 		[_emuView startEmulator];
+
 		// [[file lastPathComponent] stringByDeletingPathExtension];
 	} else {
 		UIAlertSheet *sheet = [[UIAlertSheet alloc] initWithFrame: CGRectMake(0, 240, 320, 240)];

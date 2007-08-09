@@ -1,6 +1,18 @@
-CC=arm-apple-darwin-cc 
-LD=$(CC)
-LDFLAGS=-lobjc -framework CoreFoundation -framework Foundation -framework UIKit -framework LayerKit -framework CoreGraphics -larmfp -framework GraphicsServices -framework CoreSurface -framework CoreAudio -Isrc
+CC = arm-apple-darwin-cc 
+LD = $(CC)
+LDFLAGS = -lobjc \
+          -framework CoreFoundation \
+          -framework Foundation \
+          -framework UIKit \
+          -framework LayerKit \
+          -framework CoreGraphics \
+          -framework GraphicsServices \
+          -framework CoreSurface \
+          -framework CoreAudio \
+          -larmfp 
+
+CFLAGS = -DPORTRAIT
+#CFLAGS = -DLANDSCAPE
 
 all:	NES package
 
