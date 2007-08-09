@@ -1,6 +1,6 @@
 NES.app
 NES Emulator for iPhone
-Version 0.13
+Version 0.14
 
 Core: InfoNES Project ( based on pNesX ) 
 Code: stepwhite, nervegas
@@ -27,11 +27,12 @@ CHANGELOG
 0.06	[nervegas] Corrected color palette
 0.07	[nervegas] Further controller improvements (dragging, etc)
 0.08	[nervegas] Further controller improvements (fixed disconnect, etc)
-0.09	[nervegas] Preliminary sound support - see notes below
+0.09	[nervegas] Preliminary sound support (see notes below)
 0.10	[nervegas] Fixed crashing when returning to file list
 0.11	[nervegas] Improved sound quality, both earbugs work now, buffering+
 0.12	[nervegas] Enlarged controllers, improved hot spot locations
-0.13	[nergegas] Expanded on multitouch control - see notes below
+0.13	[nergegas] Expanded on multitouch control - (see notes below)
+0.14 	[nervegas] Added switch for landscape build (see Makefile) 
 
 NOTE ON SOUND
 Sound required that you disable mediaserverd, and only works through the 
