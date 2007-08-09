@@ -28,8 +28,8 @@ extern unsigned long dwKeyPad1;
 	if ((self == [super initWithFrame:frame])!=nil) {
 #ifdef LANDSCAPE
 		_controllerImage = [UIImage applicationImageNamed:@"controller_landscape.png"];
-                B = CGRectMake(83, 353, 59, 59);
-                A = CGRectMake(144, 353, 59, 59);
+                B = CGRectMake(83, 401, 59, 59);
+                A = CGRectMake(144, 401, 59, 59);
                 Up = CGRectMake(164, 26, 38, 46);
                 Down = CGRectMake(89, 28, 32, 42);
                 Left = CGRectMake(122, 0, 40, 42);
@@ -64,7 +64,7 @@ extern unsigned long dwKeyPad1;
 	rect2.origin.y = 0;
 	rect2.size.width = 320;
 #ifdef LANDSCAPE
-	rect2.size.height = 412;
+	rect2.size.height = 460;
 #else
        rect2.size.height = 119;
 #endif
