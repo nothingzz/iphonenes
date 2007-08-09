@@ -17,20 +17,30 @@
 */
 
 #import "MainView.h"
+#include "InfoNES/InfoNES.h"
+#include "InfoNES_iPhone.h"
+
+int __screenOrientation;
+
+extern unsigned long dwKeySystem;
+extern char emuThread;
 
 @implementation MainView 
 - (id)initWithFrame:(struct CGRect)rect {
 	if ((self == [super initWithFrame: rect]) != nil) {
                 float offset = 0.0;
-#ifndef LANDSCAPE
-                offset = 48.0;
-		_navBar = [[UINavigationBar alloc] initWithFrame:
-			CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, 48.0f)
-		];
-		[_navBar setDelegate: self];
-		[_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
-		[_navBar enableAnimation];
-#endif
+                int screenOrientation = [UIHardware deviceOrientation: YES];
+          
+                if (screenOrientation != 3) {
+                    offset = 48.0;
+                    _navBar = [[UINavigationBar alloc] initWithFrame:
+                        CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, 48.0f)
+                    ];
+
+                    [_navBar setDelegate: self];
+                    [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
+                    [_navBar enableAnimation];
+                }
 
 		_transitionView = [[UITransitionView alloc] initWithFrame: 
 			CGRectMake(rect.origin.x, offset, rect.size.width, rect.size.height - offset)
@@ -39,6 +49,7 @@
 		_browser = [[FileBrowser alloc] initWithFrame:
 			CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
 		];
+
 		_emuView = [[EmulationView alloc] initWithFrame:
 			CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
 		];
@@ -46,21 +57,24 @@
 		[_browser setPath:@"/var/root/Media/ROMs/NES/"];
 		[_browser setDelegate: self];
 
-#ifndef LANDSCAPE
-		[self addSubview: _navBar];
-#endif
+                if (screenOrientation != 3) 
+                    [self addSubview: _navBar];
+
 		[self addSubview: _transitionView];
 
 		[_transitionView transition:1 toView:_browser];
 		_browsing = YES;
+                _rect = rect;
 	}
 	return self;
 }
+
 - (void)dealloc {
+        int screenOrientation = [UIHardware deviceOrientation: YES];
+
 	[_browser release];
-#ifndef LANDSCAPE
-	[_navBar release];
-#endif
+        if (screenOrientation == 3)
+            [_navBar release];
 	[super dealloc];
 }
 
@@ -69,22 +83,23 @@
 }
 
 - (void)navigationBar:(UINavigationBar *)navbar buttonClicked:(int)button {
+        int screenOrientation = [UIHardware deviceOrientation: YES];
+
 	switch (button) {
-		case 0:		// right
-			if (_browsing) {	// Reload
+		case 0:
+			if (_browsing) {
 				[_browser reloadData];
-			} else {		// Restart Game
-				[_emuView stopEmulator];
-				[_emuView startEmulator];
+			} else {
+				[self stopEmulator];
+				[self startEmulator];
 			}
 			break;
-		case 1:		// left
-			if (!_browsing) {	// ROM List
-				[_emuView stopEmulator];
+		case 1:	
+			if (!_browsing) {
+				[self stopEmulator];
 				[_transitionView transition:2 toView:_browser];
-#ifndef LANDSCAPE
-				[_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
-#endif
+                                if (screenOrientation != 3) 
+                                    [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
 			}
 			break;
 	}
@@ -92,14 +107,16 @@
 
 - (void)fileBrowser: (FileBrowser *)browser fileSelected:(NSString *)file {
 	if ([_emuView loadROM: file]) {
-		[_transitionView transition:1 toView:_emuView];
-#ifndef LANDSCAPE
-		[_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
-#endif
-		_browsing = NO;
-		[_emuView startEmulator];
 
-		// [[file lastPathComponent] stringByDeletingPathExtension];
+                int screenOrientation = [UIHardware deviceOrientation: YES];
+
+
+		[_transitionView transition:1 toView:_emuView];
+                if (screenOrientation != 3)
+                    [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
+		_browsing = NO;
+		[self startEmulator];
+
 	} else {
 		UIAlertSheet *sheet = [[UIAlertSheet alloc] initWithFrame: CGRectMake(0, 240, 320, 240)];
 		[sheet setTitle:@"Invalid ROM Image"];
@@ -109,4 +126,64 @@
 		[sheet presentSheetFromAboveView: self];
 	}
 }
+
+- (void)deviceOrientationChanged {
+    float offset = 0.0;
+    int screenOrientation = [UIHardware deviceOrientation: YES];
+
+    __screenOrientation = screenOrientation;
+
+    if (screenOrientation != 3) 
+        offset = 48.0;
+
+    [_emuView release];
+    [_browser release];
+    [_transitionView release];
+    
+    _transitionView = [[UITransitionView alloc] initWithFrame:
+            CGRectMake(_rect.origin.x, offset, _rect.size.width, _rect.size.height - offset)
+    ];
+
+    _browser = [[FileBrowser alloc] initWithFrame:
+            CGRectMake(0, 0, _rect.size.width, _rect.size.height - offset)
+    ];
+
+    _emuView = [[EmulationView alloc] initWithFrame:
+            CGRectMake(0, 0, _rect.size.width, _rect.size.height - offset)
+    ];
+
+    [_browser setPath:@"/var/root/Media/ROMs/NES/"];
+    [_browser setDelegate: self];
+    [self addSubview: _transitionView];
+    [_transitionView transition:1 toView:_browser];
+
+    if (screenOrientation == 3) {
+        [ _navBar removeFromSuperview ];
+    } else {
+        [ self addSubview: _navBar ];
+
+        if (!_browsing)
+            [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Restart" leftBack: YES];
+        else
+            [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
+    }
+
+    if (!_browsing) {
+        [_transitionView transition:1 toView:_emuView];
+    }
+}
+
+- (void)startEmulator {
+        emuThread = 0;
+        pthread_create(&emulation_tid, NULL, emulation_thread, NULL);
+}
+
+- (void)stopEmulator {
+        dwKeySystem |= 1;
+        emuThread = -1;
+        pthread_join(emulation_tid, NULL);
+        dwKeySystem = 0;
+}
+
+
 @end

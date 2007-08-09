@@ -18,6 +18,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <UIKit/UIHardware.h>
 #import <pthread.h>
 
 #import "ControllerView.h"
@@ -27,12 +28,10 @@
 {
 	ScreenView *_screenView;
 	ControllerView *_controller;
-	pthread_t emulation_tid;
+        int _orientation;
 }
 
 - (id)initWithFrame:(CGRect)frame;
-- (void)startEmulator;
-- (void)stopEmulator;
 - (BOOL)loadROM: (NSString *)path;
 - (void)dealloc;
 - (void)drawRect:(CGRect)frame;

@@ -48,16 +48,19 @@ void updateScreen() {
 
 - (void)drawRect:(CGRect)rect{
 
+    int screenOrientation = [UIHardware deviceOrientation: YES];
+
     if (initGraphics == 0) {
         int i;
         CFMutableDictionaryRef dict;
-#ifdef LANDSCAPE
-        int w = 240;
-        int h = 256;
-#else
-	int w = 256;
-	int h = 240;
-#endif
+        int w = 256;
+        int h = 240;
+
+        if (screenOrientation == 3) {
+            w = 240;
+            h = 256;
+        }
+
         int pitch = w * 2, allocSize = 2 * w * h;
         char *pixelFormat = "555L";
         unsigned short *screen;
@@ -86,11 +89,10 @@ void updateScreen() {
         CoreSurfaceBufferLock(screenSurface, 3);
 
         screenLayer = [[LKLayer layer] retain];
-#ifdef LANDSCAPE
-        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 240.0f, 255.0f)];
-#else
-        [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 256.0f, 239.0f)];
-#endif
+        if (screenOrientation == 3) 
+            [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 240.0f, 255.0f)];
+        else
+            [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 256.0f, 239.0f)];
 
         [screenLayer setContents: screenSurface];
         [screenLayer setOpaque: YES];

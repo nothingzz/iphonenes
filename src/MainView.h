@@ -30,8 +30,14 @@
 	FileBrowser *_browser;
 	EmulationView *_emuView;
 	BOOL _browsing;
+        CGRect _rect;
+        pthread_t emulation_tid;
 }
 
 - (id)initWithFrame:(CGRect)frame;
 - (void)dealloc;
+- (void)deviceOrientationChanged;
+- (void)startEmulator;
+- (void)stopEmulator;
+
 @end

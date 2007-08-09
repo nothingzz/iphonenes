@@ -21,22 +21,37 @@
 
 @implementation NESApp
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+
+        _screenOrientation = 0;
 	_window = [[UIWindow alloc] initWithContentRect:
 		 [UIHardware fullScreenApplicationContentRect]
 	];
 
 	struct CGRect rect = [UIHardware fullScreenApplicationContentRect];
 	rect.origin.x = rect.origin.y = 0.0f;
-	MainView *mainView = [[MainView alloc] initWithFrame: rect];
-	[_window setContentView: mainView]; 
 
+	_mainView = [[MainView alloc] initWithFrame: rect];
+
+	[_window setContentView: _mainView]; 
 	[_window orderFront: self];
 	[_window makeKey: self];
 	[_window _setHidden: NO];
+
 //        [self setStatusBarMode: 2 duration: 0];
 }
 
 - (void)applicationWillTerminate {
 	[_window release];
 }
+
+- (void)deviceOrientationChanged:(GSEvent *)event {
+    int screenOrientation = [UIHardware deviceOrientation: YES];
+
+    _screenOrientation = screenOrientation; 
+
+    if (screenOrientation && _previousScreenOrientation)
+        [_mainView deviceOrientationChanged];
+
+    _previousScreenOrientation = screenOrientation;
+} 
 @end

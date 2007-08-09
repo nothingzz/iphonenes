@@ -20,33 +20,38 @@
 #import <UIKit/UIView-Geometry.h>
 #import "ControllerView.h"
 #import "ScreenView.h"
+#import "MainView.h"
 
 extern unsigned long dwKeyPad1;
 
 @implementation ControllerView
 - (id)initWithFrame:(CGRect)frame {
 	if ((self == [super initWithFrame:frame])!=nil) {
-#ifdef LANDSCAPE
-		_controllerImage = [UIImage applicationImageNamed:@"controller_landscape.png"];
-                B = CGRectMake(83, 401, 59, 59);
-                A = CGRectMake(144, 401, 59, 59);
-                Up = CGRectMake(164, 26, 38, 46);
-                Down = CGRectMake(89, 28, 32, 42);
-                Left = CGRectMake(122, 0, 40, 42);
-                Right = CGRectMake(122, 52, 40, 42);
-                Select = CGRectMake(16, 8, 32, 40);
-                Start = CGRectMake(16, 52, 32, 40);
-#else
-                _controllerImage = [UIImage applicationImageNamed:@"controller_portrait.png"];
-               Up = CGRectMake(34, 0, 39, 33);
-               Down = CGRectMake(34, 65, 39, 33);
-               Left = CGRectMake(0, 31, 43, 38);
-               Right = CGRectMake(63, 31, 43, 38);
-               Select = CGRectMake(110, 60, 36, 20);
-               Start = CGRectMake(155, 60, 36, 20);
-               B = CGRectMake(197, 27, 56, 72);
-               A = CGRectMake(258, 27, 56, 72);
-#endif
+
+                int screenOrientation = [UIHardware deviceOrientation: YES];
+
+                if (screenOrientation == 3) {
+                    _controllerImage = [UIImage applicationImageNamed:@"controller_landscape.png"];
+                    B = CGRectMake(83, 401, 59, 59);
+                    A = CGRectMake(144, 401, 59, 59);
+                    Up = CGRectMake(164, 26, 38, 46);
+                    Down = CGRectMake(89, 28, 32, 42);
+                    Left = CGRectMake(122, 0, 40, 42);
+                    Right = CGRectMake(122, 52, 40, 42);
+                    Select = CGRectMake(16, 8, 32, 40);
+                    Start = CGRectMake(16, 52, 32, 40);
+                } else {
+
+                   _controllerImage = [UIImage applicationImageNamed:@"controller_portrait.png"];
+                   Up = CGRectMake(34, 0, 39, 33);
+                   Down = CGRectMake(34, 65, 39, 33);
+                   Left = CGRectMake(0, 31, 43, 38);
+                   Right = CGRectMake(63, 31, 43, 38);
+                   Select = CGRectMake(110, 60, 36, 20);
+                   Start = CGRectMake(155, 60, 36, 20);
+                   B = CGRectMake(197, 27, 56, 72);
+                   A = CGRectMake(258, 27, 56, 72);
+               }
 
 		_fixed = false;
 	}
@@ -63,11 +68,11 @@ extern unsigned long dwKeyPad1;
 	rect2.origin.x = 0;
 	rect2.origin.y = 0;
 	rect2.size.width = 320;
-#ifdef LANDSCAPE
-	rect2.size.height = 460;
-#else
-       rect2.size.height = 119;
-#endif
+        rect2.size.height = 119;
+        int screenOrientation = [UIHardware deviceOrientation: YES];
+
+        if (screenOrientation == 3) 
+            rect2.size.height = 460;
 
 	[_controllerImage draw1PartImageInRect: rect2];
 	[self fixRects];
@@ -84,7 +89,7 @@ extern unsigned long dwKeyPad1;
 
 	/* Because convertPoint:toView: was segfaulting on me... */
 
-	UIView *mainView = [[[self superview] superview] superview];
+	MainView *mainView = [[[self superview] superview] superview];
 	Up = [self convertRect: Up toView: mainView];
 	Down = [self convertRect: Down toView: mainView];
 	Left = [self convertRect: Left toView: mainView];
