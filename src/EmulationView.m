@@ -27,7 +27,7 @@ extern char emuThread;
 - (id)initWithFrame:(CGRect)frame {
     if ((self == [super initWithFrame:frame])!=nil) {
 #ifdef LANDSCAPE
-        _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, 0, frame.size.width, 412)];
+        _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, 0, frame.size.width, 460)];
 #else
         _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, frame.size.height-119, frame.size.width, 119)];
 #endif
@@ -37,14 +37,13 @@ extern char emuThread;
         int width = 240;
         int height = 256;
         int xOffset = floor((frame.size.width-width)/2);
-        int yOffset = 98;
+        int yOffset = 122;
 #else
 	int width = 256;
 	int height = 240;
         int xOffset = floor((frame.size.width-width)/2);
         int yOffset = floor((frame.size.height-119-height)/2);
 #endif
-
         _screenView = [[ScreenView alloc] initWithFrame: CGRectMake(xOffset, yOffset, width, height)];
 
         [self addSubview: _controller];

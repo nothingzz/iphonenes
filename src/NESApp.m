@@ -33,6 +33,7 @@
 	[_window orderFront: self];
 	[_window makeKey: self];
 	[_window _setHidden: NO];
+//        [self setStatusBarMode: 2 duration: 0];
 }
 
 - (void)applicationWillTerminate {
