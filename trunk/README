@@ -1,9 +1,10 @@
 NES.app
 NES Emulator for iPhone
-Version 0.20
+Version 0.21
+SVN: http://svn.natetrue.com/nesapp
 
-Core: InfoNES Project ( based on pNesX ) 
-Code: nervegas, stepwhite
+Core: InfoNES Project (based on pNesX) 
+Code: nervegas, stepwhite (original glue)
 Cool: nightwatch (CoreSurfaces), bwhiteman (CoreAudio), dshadow (General)
       wheat-_ (Icon)
 
@@ -26,36 +27,52 @@ BUILDING
 
 2. Place your ROM files in /var/root/Media/ROMs/NES
 
-NOTE ON SOUND
-Sound required that you disable mediaserverd, and only works through the
-headphones. A couple of easy aliases can be added to your .profile to disable or
-re-enable mediaserverd if you are using MobileShell:
+KNOWN BUGS
 
-alias nosound="launchctl unload /System/Library/LaunchDaemons/coreaudiod.plist"
-alias sound="launchctl load /System/Library/LaunchDaemons/coreaudiod.plist"
+  SOUND
+  In order to have sound, you must disable mediaserverd, which is the iPhone's
+  sound mixer process, which is locked onto the audio device.  A couple of 
+  easy aliases can be added to your .profile to disable or re-enable 
+  mediaserverd if you are using MobileShell:
 
-NOTE ON MULTITOUCH
-The multitouch reports mouseDown and mouseDragged events separately, and so
-you can run while holding 'B', for example, but the iPhone appears to get
-pushed to the limits when you are holding a direction and dragging on
-another. It fails to report the necessary mouseUp events to distinguish which
-button(s) let up, and so they must all be reset. As a result:
+ alias nosound="launchctl unload /System/Library/LaunchDaemons/coreaudiod.plist"
+ alias sound="launchctl load /System/Library/LaunchDaemons/coreaudiod.plist"
 
-Versions >= 0.20
-  If you are doing something complex, such as running with B held
+  While you have mediaserverd disabled ('nosound'), no other system sounds
+  will play, so be sure to re-enable it ('sound') when you're finished playing. 
+
+  MULTITOUCH
+  The multitouch reports mouseDown and mouseDragged events separately, and so
+  you can run while holding 'B', for example, but the iPhone appears to get
+  pushed to the limits when you are holding a direction and dragging on
+  another. It fails to report the necessary mouseUp events to distinguish which
+  button(s) let up, and so they must all be reset. 
+
+  As a result, if you are doing something complex, such as running with B held
   down, then jump with A, you will also need to slide your thumb back off the
-  directional pad (to zero, or to the other size) to stop running.
+  directional pad (to zero, or to the other size) to stop running as that
+  mouseUp will not be reported.
 
-Versions < 0.20
-  Whenever you are holding a direction + button, releasing the button will 
-  cause the direction to stop moving as well. I am working on
-  finding a way to poll the screen to re-evaluate all the buttons, but 
-  until then, this is the only caveat you'll have to live with.
+  VOLUME
 
-NOTE ON DEBUG
+  If you reset your phone with the earbuds connected, no audio will be heard
+  through the speakers. Pull the earbuds out then hold Home + Power until
+  the handset shuts itself down (don't be tempted to use the slide). Once it
+  shuts down, release the buttons, wait 10 seconds, then push and hold power
+  to turn the handset back on.
+
+  It is recommended you always reset your iPhone without ear buds connected to 
+  have both speaker and earbud support. If, however, you would like much
+  louder ear buds (and no speaker), resetting it with the earbuds in will
+  have this effect.
+
+  NOTE: In many cases, simply re-enabling / re-disabling mediaserverd with
+        the earbuds out will rectify the situation.
+
+DEBUG
 
 Compiling with -DDEBUG (see Makefile) will enable debugging to be sent to
-/tmp/NES.debug. At the moment, this is only recording touchscreen activity.
+/tmp/NES.debug. At the moment, this is only recording some activity.
 
 CHANGELOG
 
@@ -79,6 +96,7 @@ CHANGELOG
 0.18	[nervegas] Fixed minor issue with orientation flip, added wheat to cool
 0.19	[nervegas] Improved orientation transitions
 0.20	[nervegas] Changes to multitouch (see notes), added DEBUG, old icon
+0.21	[nervegas] Added support for external audio / switch added for earbuds
 
 LICENSE
 

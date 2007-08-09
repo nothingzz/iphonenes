@@ -30,11 +30,12 @@
 extern void updateScreen();
 extern CoreSurfaceBufferRef screenSurface;
 extern int __screenOrientation;
+extern int audioIsSpeaker;
 
 extern pthread_cond_t screenUpdateLock;
 extern pthread_mutex_t screenUpdateMutex;
 
-AudioDeviceID defaultInputDevice, defaultOutputDevice;
+AudioDeviceID defaultInputDevice, defaultOutputDevice, basebandDevice;
 AudioStreamBasicDescription deviceFormat;
 
 unsigned long dwKeyPad1;
@@ -126,15 +127,19 @@ static OSStatus AudioOutputProc(
     void* inClientData)
 {
     int i;
+    float volume = 127.0;
     AudioBuffer *outputBuffer = &outOutputData->mBuffers[0];
     unsigned long frameCount = outputBuffer->mDataByteSize
                             / (outputBuffer->mNumberChannels * sizeof(short));
     short *coreAudioBuffer = (short *) outputBuffer->mData;
 
+    if (!audioIsSpeaker)
+        volume = 255;
+
     if (writePtr > playPtr+frameCount || writePtr < playPtr) {
         short sample;
         for(i=0;i<frameCount*2;i+=2) {
-            sample = (int)(waveBuffer[playPtr] * 127.0);
+            sample = (int)(waveBuffer[playPtr] * volume);
             coreAudioBuffer[i] =   sample;
             coreAudioBuffer[i+1] = sample;
             playPtr++;
@@ -145,6 +150,37 @@ static OSStatus AudioOutputProc(
     return noErr;
 }
 
+AudioDeviceID getBasebandDevice() {
+    UInt32 propsize = 0;
+    int i = 0; 
+    char null[4096];
+    char *outName;
+
+    AudioDeviceID mydevice;
+
+    AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propsize, 0);
+    int numDevices = propsize / sizeof(AudioDeviceID);
+    AudioDeviceID *deviceIDs = (AudioDeviceID*) malloc(sizeof(AudioDeviceID) * numDevices);
+    AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propsize, deviceIDs);
+
+    for(i=0;i<numDevices;i++) {
+        AudioDeviceGetPropertyInfo(deviceIDs[i], 0, 0, kAudioDevicePropertyDeviceName, &propsize, null);
+        outName = (char*)malloc(propsize);
+        AudioDeviceGetProperty(deviceIDs[i], 0, 0, kAudioDevicePropertyDeviceName, &propsize, outName);
+        if (!strcmp(outName, "Baseband Output")) {
+#ifdef DEBUG
+             FILE *f = fopen("/tmp/NES.debug", "a");
+             fprintf(f, "InfoNES_SoundInit.getBasebandDevice: Found baseband output\n");
+             fclose(f);
+#endif
+             mydevice = deviceIDs[i];
+        }
+        free(outName);
+    }
+  
+    return mydevice;
+} 
+
 void InfoNES_SoundInit( void ) {
     UInt32 propsize = 0;
     int isInput = 0, count;
@@ -152,34 +188,66 @@ void InfoNES_SoundInit( void ) {
     writePtr = 0;
     playPtr = 0;
 
+    audioIsSpeaker = 1;
+
     propsize = sizeof(AudioDeviceID);
     AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
         &propsize, &defaultInputDevice);
     AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
         &propsize, &defaultOutputDevice);
 
-    propsize = sizeof(double);
+    basebandDevice = getBasebandDevice();
+
+/*
     AudioDeviceSetProperty(defaultOutputDevice, 0, 0, isInput,
         kAudioDevicePropertyNominalSampleRate, propsize, &sampleRate);
-    AudioDeviceGetProperty(defaultOutputDevice, 0, isInput,
-        kAudioDevicePropertyNominalSampleRate, &propsize, &actualSampleRate);
+    AudioDeviceSetProperty(basebandDevice, 0, 0, isInput,
+        kAudioDevicePropertyNominalSampleRate, propsize, &sampleRate);
+*/
 
-    AudioDeviceAddIOProc(defaultOutputDevice, AudioOutputProc, 0);
 }
 
 
 int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
     OSErr err;
-    err = AudioDeviceStart(defaultOutputDevice, AudioOutputProc);
-    if (err) 
-      return 1;
 
+#ifdef DEBUG
+    FILE *f;
+    f = fopen("/tmp/NES.debug", "a");
+#endif
+
+    err = AudioDeviceAddIOProc((audioIsSpeaker) ? basebandDevice : defaultOutputDevice, AudioOutputProc, 0);
+#ifdef DEBUG
+    fprintf(f, "InfoNES_SoundOpen.AudioDeviceAddIOProc(%d) returned %d\n", audioIsSpeaker, err);
+#endif
+    if (err) {
+#ifdef DEBUG
+      fclose(f);
+#endif
+      return 1;
+    } 
+
+    err = AudioDeviceStart((audioIsSpeaker) ? basebandDevice : defaultOutputDevice, AudioOutputProc);
+#ifdef DEBUG
+    fprintf(f, "InfoNES_SoundOpen.AudioDeviceStart(%d) returned %d\n", audioIsSpeaker, err);
+#endif
+    if (err) {
+#ifdef DEBUG
+      fclose(f);
+#endif
+      return 1;
+    }
+
+#ifdef DEBUG
+    fclose(f);
+#endif
     return 0;
 }
 
 void InfoNES_SoundClose(void) {
 
-    AudioDeviceStop(defaultOutputDevice, AudioOutputProc);
+    AudioDeviceStop((audioIsSpeaker) ? basebandDevice : defaultOutputDevice, AudioOutputProc);
+    AudioDeviceRemoveIOProc((audioIsSpeaker) ? basebandDevice : defaultOutputDevice, AudioOutputProc);
 }
 
 void InfoNES_SoundOutput(
