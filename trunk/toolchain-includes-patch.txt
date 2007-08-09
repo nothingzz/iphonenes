@@ -1,0 +1,88 @@
+*** ./GraphicsServices/GraphicsServices.h	Sat Jul 28 23:46:27 2007
+--- /usr/local/arm-apple-darwin/include/./GraphicsServices/GraphicsServices.h	Mon Aug  6 22:29:08 2007
+***************
+*** 6,11 ****
+--- 6,12 ----
+  
+  int GSEventIsChordingHandEvent(GSEvent *ev);
+  int GSEventGetClickCount(GSEvent *ev);
++ struct CGRect GSEventGetLocationInWindow(GSEvent *ev);
+  
+  #endif
+  
+*** ./UIKit/UIAnimation.h	Sat Jul 28 21:02:52 2007
+--- /usr/local/arm-apple-darwin/include/./UIKit/UIAnimation.h	Mon Aug  6 21:25:06 2007
+***************
+*** 4,10 ****
+   *     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2006 by Steve Nygard.
+   */
+  
+! #import "NSObject.h"
+  
+  @interface UIAnimation : NSObject
+  {
+--- 4,10 ----
+   *     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2006 by Steve Nygard.
+   */
+  
+! //#import "NSObject.h"
+  
+  @interface UIAnimation : NSObject
+  {
+*** ./UIKit/UIAnimator.h	Sat Jul 28 21:02:52 2007
+--- /usr/local/arm-apple-darwin/include/./UIKit/UIAnimator.h	Mon Aug  6 21:24:47 2007
+***************
+*** 4,10 ****
+   *     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2006 by Steve Nygard.
+   */
+  
+! #import "NSObject.h"
+  
+  @class NSMutableArray;
+  
+--- 4,10 ----
+   *     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2006 by Steve Nygard.
+   */
+  
+! //#import "NSObject.h"
+  
+  @class NSMutableArray;
+  
+*** ./UIKit/UIKit.h	Mon Aug  6 10:27:37 2007
+--- /usr/local/arm-apple-darwin/include/./UIKit/UIKit.h	Mon Aug  6 21:22:48 2007
+***************
+*** 1,6 ****
+  #ifndef UIKIT_H
+  #define UIKIT_H
+! #import <CoreGraphics/CoreGraphics.h>
+  
+  /* Don't add files to this unless you've made sure they compile. --pcwalton */
+  
+--- 1,6 ----
+  #ifndef UIKIT_H
+  #define UIKIT_H
+! #import <GraphicsServices/GraphicsServices.h>
+  
+  /* Don't add files to this unless you've made sure they compile. --pcwalton */
+  
+*** ./UIKit/UIPushButton.h	Tue Aug  7 04:05:00 2007
+--- /usr/local/arm-apple-darwin/include/./UIKit/UIPushButton.h	Sat Jul 28 21:02:52 2007
+***************
+*** 4,10 ****
+   *     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2006 by Steve Nygard.
+   */
+  
+- #import <UIKit/CDStructures.h>
+  #import <UIKit/UIControl.h>
+  
+  @class NSString;
+--- 4,9 ----
+*** ./UIKit/UITextTraitsClientProtocol.h	Tue Aug  7 04:05:00 2007
+--- /usr/local/arm-apple-darwin/include/./UIKit/UITextTraitsClientProtocol.h	Mon Aug  6 21:26:22 2007
+***************
+*** 59,61 ****
+--- 59,62 ----
+  
+  @end
+  
++ 
