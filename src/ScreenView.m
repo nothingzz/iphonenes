@@ -33,14 +33,16 @@ void updateScreen() {
 	}
 	return self;
 }
+
 - (void)updateScreen {
 
 	[sharedInstance setNeedsDisplay];
-
 }
+
 - (void)dealloc {
-
-
+        [ screenLayer release ];
+        pthread_mutex_destroy(&screenUpdateMutex);
+        pthread_cond_destroy(&screenUpdateLock);
 	[super dealloc];
 }
 
@@ -82,7 +84,7 @@ void updateScreen() {
         [screenLayer setFrame: CGRectMake(0.0f, 0.0f, 256.0f, 239.0f)];
         [screenLayer setContents: screenSurface];
         [screenLayer setOpaque: YES];
-        [screenLayer setDelegate: self];
+//        [screenLayer setDelegate: self];
         [[self _layer] addSublayer: screenLayer];
 
         CoreSurfaceBufferUnlock(screenSurface);
@@ -90,15 +92,4 @@ void updateScreen() {
 
 }
 
-/*
-- (void)lock {
-	pthread_mutex_lock(&screenUpdateMutex);
-
-}
-
-- (void)unlock {
-	pthread_mutex_unlock(&screenUpdateMutex);
-
-}
-*/
 @end
