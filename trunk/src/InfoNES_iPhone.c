@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <sys/select.h>
-#include <unistd.h>
 
 extern void updateScreen();
 extern CoreSurfaceBufferRef screenSurface;
@@ -83,10 +82,11 @@ void *InfoNES_MemorySet(void *dest, int c, int count) {
 }
 
 void InfoNES_LoadFrame() {
-    unsigned short *c;
+    WORD *c;
     int x, y, i = 0;
 
     c = CoreSurfaceBufferGetBaseAddress(screenSurface);
+    register WORD wColor;
 
     pthread_mutex_lock(&screenUpdateMutex);
 
@@ -95,7 +95,9 @@ void InfoNES_LoadFrame() {
         for (y=0; y < 240; y++)
         {
             for (x=0; x<256; x++) {
-                    c[ ((x+1) * 240) - (y+1) ] = NesPalette[WorkFrame[(256*y)+x]];
+                wColor = WorkFrame[ ( y << 8 ) + x ];
+                wColor = ((wColor & 0x7fe0)<<1) | (wColor&0x001f);
+                c[((x+1) * 240) - (y+1)] = wColor;
             }
         }
     } else {
@@ -103,7 +105,9 @@ void InfoNES_LoadFrame() {
         for (y=0; y < 240; y++)
         {
             for (x=0; x<256; x++) {
-                c[i++] = NesPalette[WorkFrame[(256*y)+x]];
+                wColor = WorkFrame[ ( y << 8 ) + x ];
+                wColor = ((wColor & 0x7fe0)<<1) | (wColor&0x001f);
+                c[i++] = wColor;
             }
         }
     }

@@ -35,15 +35,15 @@
 	CGRect Left;
 	CGRect Down;
 	CGRect Right;
+        CGRect UpLeft;
+        CGRect UpRight;
+        CGRect DownLeft;
+        CGRect DownRight;
 	CGRect Select;
 	CGRect Start;
 	CGRect B;
 	CGRect A;
 
-	CGRect UpLeft;
-	CGRect UpRight;
-	CGRect DownLeft;
-	CGRect DownRight;
 	BOOL _fixed;
 }
 

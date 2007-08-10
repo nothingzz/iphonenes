@@ -25,7 +25,6 @@
     UIWindow *_window;
     MainView *_mainView;
     int _screenOrientation;
-    int _previousScreenOrientation;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;

@@ -62,7 +62,7 @@ void updateScreen() {
         }
 
         int pitch = w * 2, allocSize = 2 * w * h;
-        char *pixelFormat = "555L";
+        char *pixelFormat = "565L";
         unsigned short *screen;
 
         initGraphics = 1;
