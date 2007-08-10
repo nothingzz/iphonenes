@@ -47,11 +47,13 @@
 - (void)deviceOrientationChanged:(GSEvent *)event {
     int screenOrientation = [UIHardware deviceOrientation: YES];
 
-    _screenOrientation = screenOrientation; 
+    if ( (screenOrientation == 1 || screenOrientation == 3) &&
+         _screenOrientation != screenOrientation) 
+    {
+        _screenOrientation = screenOrientation; 
 
-    if (screenOrientation && _previousScreenOrientation)
-        [_mainView deviceOrientationChanged];
-
-    _previousScreenOrientation = screenOrientation;
+        if (screenOrientation)
+             [_mainView deviceOrientationChanged];
+    }
 } 
 @end

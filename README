@@ -1,14 +1,14 @@
 NES.app
 NES Emulator for iPhone
-Version 0.21
+Version 0.24
 SVN: http://svn.natetrue.com/nesapp
 
 Core: InfoNES Project (based on pNesX) 
-Code: nervegas, stepwhite (original glue)
+Code: nervegas, stepwhite 
 Cool: nightwatch (CoreSurfaces), bwhiteman (CoreAudio), dshadow (General)
       wheat-_ (Icon)
 
-BUILDING
+COMPILING FROM SOURCE
 
 0. You will need to install the arm-apple-darwin toolchain. See:
    http://iphone.fiveforty.net/wiki/index.php/Toolchain_Project
@@ -55,48 +55,22 @@ KNOWN BUGS
 
   VOLUME
 
-  If you reset your phone with the earbuds connected, no audio will be heard
-  through the speakers. Pull the earbuds out then hold Home + Power until
-  the handset shuts itself down (don't be tempted to use the slide). Once it
-  shuts down, release the buttons, wait 10 seconds, then push and hold power
-  to turn the handset back on.
+  If you disable mediaserverd with the earbuds connected, no audio will be heard
+  through the speakers. Pull the earbuds out, and then start/stop mediaserverd
+  again. This will correct the problem. If it doesn't, try resetting.
 
-  It is recommended you always reset your iPhone without ear buds connected to 
-  have both speaker and earbud support. If, however, you would like much
+  It is recommended you always kill mediaserverd with the earbuds DISCONNECTED
+  to have both speaker and earbud support. If, however, you would like much
   louder ear buds (and no speaker), resetting it with the earbuds in will
   have this effect.
-
-  NOTE: In many cases, simply re-enabling / re-disabling mediaserverd with
-        the earbuds out will rectify the situation.
 
 DEBUG
 
 Compiling with -DDEBUG (see Makefile) will enable debugging to be sent to
 /tmp/NES.debug. At the moment, this is only recording some activity.
 
-CHANGELOG
-
-0.01	[stepwhite] Initial release 
-0.02	[nervegas] Implemented frame skip
-0.03	[nervegas] Rewrote rendering routines using CoreSurface
-0.04	[nervegas] Added multi-touch support to controller
-0.05	[nervegas] Further optimizations
-0.06	[nervegas] Corrected color palette
-0.07	[nervegas] Further controller improvements (dragging, etc)
-0.08	[nervegas] Further controller improvements (fixed disconnect, etc)
-0.09	[nervegas] Preliminary sound support (see notes) 
-0.10	[nervegas] Fixed crashing when returning to file list
-0.11	[nervegas] Improved sound quality, both earbuds work now, buffering+
-0.12	[nervegas] Enlarged controllers, improved hot spot locations
-0.13	[nergegas] Expanded on multitouch control - (see notes) 
-0.14 	[nervegas] Added switch for landscape build [OBSOLETE]
-0.15	[nervegas] Widened landscape mode - removed navBar 
-0.16	[nervegas] added toolchain header patch / better docs
-0.17	[nervegas] Set orientation mode during game play, updated header patch
-0.18	[nervegas] Fixed minor issue with orientation flip, added wheat to cool
-0.19	[nervegas] Improved orientation transitions
-0.20	[nervegas] Changes to multitouch (see notes), added DEBUG, old icon
-0.21	[nervegas] Added support for external audio / switch added for earbuds
+Debug also causes the hotspots on the screen to be drawn in vivid colors, for
+debugging the controls.
 
 LICENSE
 

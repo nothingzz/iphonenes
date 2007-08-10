@@ -34,10 +34,10 @@ extern unsigned long dwKeyPad1;
                     _controllerImage = [UIImage applicationImageNamed:@"controller_landscape.png"];
                     B = CGRectMake(83, 401, 59, 59);
                     A = CGRectMake(144, 401, 59, 59);
-                    Up = CGRectMake(164, 26, 38, 46);
-                    Down = CGRectMake(89, 28, 32, 42);
+                    Up = CGRectMake(165, 26, 38, 46);
+                    Down = CGRectMake(88, 28, 32, 42);
                     Left = CGRectMake(122, 0, 40, 40);
-                    Right = CGRectMake(122, 52, 40, 42);
+                    Right = CGRectMake(122, 58, 40, 42);
                     Select = CGRectMake(16, 8, 32, 40);
                     Start = CGRectMake(16, 52, 32, 40);
 
@@ -86,7 +86,7 @@ extern unsigned long dwKeyPad1;
 	[_controllerImage draw1PartImageInRect: rect2];
 
 	
-#ifdef SHOW_HITSPOT
+#ifdef DEBUG
 	CGContextRef ctx = UICurrentContext();
 	float red[4] = {1, 0, 0, 1};
 	float green[4] = {0, 1, 0, 1};
