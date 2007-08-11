@@ -29,10 +29,6 @@ extern char emuThread;
     if ((self == [super initWithFrame:frame])!=nil) {
         int screenOrientation = [UIHardware deviceOrientation: YES];
 
-        FILE *f = fopen("/tmp/out", "a");
-        fprintf(f, "orientation: %d\n", screenOrientation);
-        fclose(f);
-
         if (screenOrientation == 3) 
             _controller = [[ControllerView alloc] initWithFrame: CGRectMake(frame.origin.x, 0, frame.size.width, 460)];
         else

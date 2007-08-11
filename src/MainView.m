@@ -219,5 +219,8 @@ int audioIsSpeaker;
         dwKeySystem = 0;
 }
 
+- (int)isBrowsing {
+	return _browsing;
+}
 
 @end
