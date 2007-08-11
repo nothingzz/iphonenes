@@ -39,5 +39,6 @@
 - (void)deviceOrientationChanged;
 - (void)startEmulator;
 - (void)stopEmulator;
+- (int)isBrowsing;
 
 @end

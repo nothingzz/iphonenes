@@ -32,19 +32,19 @@ extern unsigned long dwKeyPad1;
 
                 if (screenOrientation == 3) {
                     _controllerImage = [UIImage applicationImageNamed:@"controller_landscape.png"];
-                    B = CGRectMake(83, 401, 59, 59);
-                    A = CGRectMake(144, 401, 59, 59);
-                    Up = CGRectMake(165, 26, 38, 46);
-                    Down = CGRectMake(88, 28, 32, 42);
-                    Left = CGRectMake(122, 0, 40, 40);
-                    Right = CGRectMake(122, 58, 40, 42);
-                    Select = CGRectMake(16, 8, 32, 40);
-                    Start = CGRectMake(16, 52, 32, 40);
+                    B = CGRectMake(44, 383, 80, 77);
+                    A = CGRectMake(126, 383, 80, 77);
+                    Up = CGRectMake(169, 38, 50, 43);
+                    Down = CGRectMake(74, 38, 50, 43);
+                    Left = CGRectMake(125, 0, 43, 45);
+                    Right = CGRectMake(125, 71, 43, 45);
+                    Select = CGRectMake(16,17, 30, 38);
+                    Start = CGRectMake(16, 63, 30, 38);
 
-                    UpLeft = CGRectMake(164, 0, 38, 25); 
-                    UpRight = CGRectMake(164, 73, 38, 24);
-                    DownLeft = CGRectMake(89, 0, 32, 26);
-                    DownRight = CGRectMake(89, 72, 32, 26);
+                    UpLeft = CGRectMake(169, 0, 49, 37); 
+                    UpRight = CGRectMake(169, 82, 49, 34);
+                    DownLeft = CGRectMake(75, 0, 49, 37);
+                    DownRight = CGRectMake(75, 82, 49, 34);
                 } else {
                    _controllerImage = [UIImage applicationImageNamed:@"controller_portrait.png"];
                    Up = CGRectMake(34, 0, 39, 33);
@@ -193,7 +193,7 @@ extern unsigned long dwKeyPad1;
 - (void)mouseDown:(GSEvent *)event {
 	int button = [self controllerButtonPressed: event];
         if (button)
-            dwKeyPad1 = button;
+            dwKeyPad1 |= button;
 
 #ifdef DEBUG
         FILE *f = fopen("/tmp/NES.debug", "a");

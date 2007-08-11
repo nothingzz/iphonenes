@@ -21,7 +21,7 @@
 
 @implementation NESApp
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-
+        _mainView = NULL;
         _screenOrientation = 0;
 	_window = [[UIWindow alloc] initWithContentRect:
 		 [UIHardware fullScreenApplicationContentRect]
@@ -36,8 +36,6 @@
 	[_window orderFront: self];
 	[_window makeKey: self];
 	[_window _setHidden: NO];
-
-//        [self setStatusBarMode: 2 duration: 0];
 }
 
 - (void)applicationWillTerminate {
@@ -51,6 +49,8 @@
          _screenOrientation != screenOrientation) 
     {
         _screenOrientation = screenOrientation; 
+
+        [self setStatusBarMode: ((screenOrientation == 3 && _mainView && [ _mainView isBrowsing ] != YES) ? 1 : 0) duration: 0];
 
         if (screenOrientation)
              [_mainView deviceOrientationChanged];
