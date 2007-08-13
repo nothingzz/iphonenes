@@ -30,49 +30,50 @@ int audioIsSpeaker;
 
 @implementation MainView 
 - (id)initWithFrame:(struct CGRect)rect {
-	if ((self == [super initWithFrame: rect]) != nil) {
-                float offset = 0.0;
-                int screenOrientation = [UIHardware deviceOrientation: YES];
-                audioIsSpeaker = 1;
+    if ((self == [super initWithFrame: rect]) != nil) {
+        float offset = 0.0;
+        int screenOrientation = [UIHardware deviceOrientation: YES];
+        audioIsSpeaker = 1;
 
-                [UIHardware setSpeakerPhoneEnabled: YES];
+        [UIHardware setSpeakerPhoneEnabled: YES];
           
-                if (screenOrientation != 3) {
-                    offset = 48.0;
-                    _navBar = [[UINavigationBar alloc] initWithFrame:
-                        CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, 48.0f)
-                    ];
+        if (screenOrientation != 3) {
+            offset = 48.0;
+            _navBar = [[UINavigationBar alloc] initWithFrame:
+                CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, 48.0f)
+            ];
 
-                    [_navBar setDelegate: self];
-                    [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
-                    [_navBar enableAnimation];
-                }
+            [_navBar setDelegate: self];
+            [_navBar showButtonsWithLeftTitle:nil rightTitle:
+                @"All Games" leftBack: YES];
+            [_navBar enableAnimation];
+        }
 
-		_transitionView = [[UITransitionView alloc] initWithFrame: 
-			CGRectMake(rect.origin.x, offset, rect.size.width, rect.size.height - offset)
-		];
+        _transitionView = [[UITransitionView alloc] initWithFrame: 
+            CGRectMake(rect.origin.x, offset, rect.size.width, 
+                       rect.size.height - offset)
+        ];
 
-		_browser = [[FileBrowser alloc] initWithFrame:
-			CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
-		];
+        _browser = [[FileBrowser alloc] initWithFrame:
+            CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
+        ];
+        [ _browser setSaved: NO];
+        [_browser setPath:@"/var/root/Media/ROMs/NES/"];
+        [_browser setDelegate: self];
 
-		_emuView = [[EmulationView alloc] initWithFrame:
-			CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
-		];
+        _emuView = [[EmulationView alloc] initWithFrame:
+            CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
+	];
 
-		[_browser setPath:@"/var/root/Media/ROMs/NES/"];
-		[_browser setDelegate: self];
+        if (screenOrientation != 3) 
 
-                if (screenOrientation != 3) 
-                    [self addSubview: _navBar];
-
-		[self addSubview: _transitionView];
-
-		[_transitionView transition:1 toView:_browser];
-		_browsing = YES;
-                _rect = rect;
-	}
-	return self;
+        [self addSubview: _navBar];
+        [self addSubview: _transitionView];
+        [_transitionView transition:1 toView:_browser];
+        _browsing = YES;
+        _rect = rect;
+    }
+    return self;
 }
 
 - (void)dealloc {
@@ -89,65 +90,100 @@ int audioIsSpeaker;
 }
 
 - (void)navigationBar:(UINavigationBar *)navbar buttonClicked:(int)button {
-        int screenOrientation = [UIHardware deviceOrientation: YES];
+    int screenOrientation = [UIHardware deviceOrientation: YES];
 
-	switch (button) {
-		case 0:
-			if (_browsing) {
-				[_browser reloadData];
-			} else {
-                            InfoNES_SoundClose();
-                            if (!audioIsSpeaker) {
-                                [UIHardware setSpeakerPhoneEnabled: YES];
-                                audioIsSpeaker = 1;
-                                if (screenOrientation != 3)
-                                    [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Speaker" leftBack: YES];
-                            } else {
-                                [UIHardware setSpeakerPhoneEnabled: NO];
-                                audioIsSpeaker = 0;
-                                if (screenOrientation != 3)
-                                    [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Headset" leftBack: YES];
-                            }
-                            InfoNES_SoundOpen(0, 0);
-			}
-			break;
-		case 1:	
-			if (!_browsing) {
-                                _browsing = YES;
-				[self stopEmulator];
-				[_transitionView transition:2 toView:_browser];
-                                if (screenOrientation != 3) 
-                                    [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
-			}
-			break;
-	}
+    switch (button) {
+
+        /* Right Nav Button */
+
+        case 0: 
+        if (_browsing) {
+            if ([ _browser getSaved ] == NO) {
+                [ _browser setSaved: YES];
+                [_navBar showButtonsWithLeftTitle:nil 
+                         rightTitle:@"Saved Games" leftBack: YES
+                ];
+            } else {
+                [_browser setSaved: NO];
+                [_navBar showButtonsWithLeftTitle:nil 
+                         rightTitle:@"All Games" leftBack: YES
+                ];
+            }
+            [_browser reloadData];
+
+        } else {
+            InfoNES_SoundClose();
+            if (!audioIsSpeaker) {
+                [UIHardware setSpeakerPhoneEnabled: YES];
+                audioIsSpeaker = 1;
+                if (screenOrientation != 3)
+                    [_navBar showButtonsWithLeftTitle:@"ROM List" 
+                             rightTitle:@"Speaker" leftBack: YES];
+            } else {
+                [UIHardware setSpeakerPhoneEnabled: NO];
+                audioIsSpeaker = 0;
+                if (screenOrientation != 3)
+                    [_navBar showButtonsWithLeftTitle:@"ROM List" 
+                             rightTitle:@"Headset" leftBack: YES
+                    ];
+            }
+            InfoNES_SoundOpen(0, 0);
+        }
+        break;
+
+        /* Left Nav Button */
+
+        case 1:	
+        if (!_browsing) {
+            _browsing = YES;
+            [self stopEmulator];
+            [_transitionView transition:2 toView:_browser];
+            if (screenOrientation != 3) {
+                if ([ _browser getSaved ] == NO) {
+                    [_navBar showButtonsWithLeftTitle:nil 
+                             rightTitle:@"All Games" leftBack: YES
+                    ];
+                } else {
+                    [_navBar showButtonsWithLeftTitle:nil 
+                             rightTitle:@"Saved Games" leftBack: YES
+                    ];
+                }
+
+            }
+        }
+        break;
+
+    }
 }
 
 - (void)fileBrowser: (FileBrowser *)browser fileSelected:(NSString *)file {
-	if ([_emuView loadROM: file]) {
+    if ([_emuView loadROM: file]) {
+        int screenOrientation = [UIHardware deviceOrientation: YES];
+        fileName = malloc(strlen([file cStringUsingEncoding: 
+                                       NSASCIIStringEncoding])+1);
+        strcpy(fileName, [file cStringUsingEncoding: NSASCIIStringEncoding]);
 
-                int screenOrientation = [UIHardware deviceOrientation: YES];
+        [_transitionView transition:1 toView:_emuView];
+        if (screenOrientation != 3) {
+            if (!audioIsSpeaker) {
+                [_navBar showButtonsWithLeftTitle:@"ROM List" 
+                         rightTitle:@"Headset" leftBack: YES];
+            } else {
+                [_navBar showButtonsWithLeftTitle:@"ROM List" 
+                         rightTitle:@"Speaker" leftBack: YES];
+            }
+        }
+        _browsing = NO;
+        [self startEmulator];
 
-
-		[_transitionView transition:1 toView:_emuView];
-                if (screenOrientation != 3) {
-                    if (!audioIsSpeaker) {
-                        [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Headset" leftBack: YES];
-                    } else {
-                        [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Speaker" leftBack: YES];
-                    }
-                }
-		_browsing = NO;
-		[self startEmulator];
-
-	} else {
-		UIAlertSheet *sheet = [[UIAlertSheet alloc] initWithFrame: CGRectMake(0, 240, 320, 240)];
-		[sheet setTitle:@"Invalid ROM Image"];
-		[sheet setBodyText:[NSString stringWithFormat:@"%@ does not appear to be a valid ROM image.", file]];
-		[sheet addButtonWithTitle:@"OK"];
-		[sheet setDelegate: self];
-		[sheet presentSheetFromAboveView: self];
-	}
+    } else {
+        UIAlertSheet *sheet = [[UIAlertSheet alloc] initWithFrame: CGRectMake(0, 240, 320, 240)];
+        [sheet setTitle:@"Invalid ROM Image"];
+        [sheet setBodyText:[NSString stringWithFormat:@"%@ does not appear to be a valid ROM image.", file]];
+        [sheet addButtonWithTitle:@"OK"];
+        [sheet setDelegate: self];
+        [sheet presentSheetFromAboveView: self];
+    }
 }
 
 - (void)deviceOrientationChanged {
@@ -155,7 +191,6 @@ int audioIsSpeaker;
     int screenOrientation = [UIHardware deviceOrientation: YES];
 
     __screenOrientation = screenOrientation;
-
     if (screenOrientation != 3) 
         offset = 48.0;
 
@@ -197,12 +232,20 @@ int audioIsSpeaker;
 
         if (!_browsing) {
             if (!audioIsSpeaker) {
-                [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Headset" leftBack: YES];
+                [_navBar showButtonsWithLeftTitle:@"ROM List" 
+                         rightTitle:@"Headset" leftBack: YES];
             } else {
-                [_navBar showButtonsWithLeftTitle:@"ROM List" rightTitle:@"Speaker" leftBack: YES];
+                [_navBar showButtonsWithLeftTitle:@"ROM List" 
+                         rightTitle:@"Speaker" leftBack: YES];
             }
         } else {
-            [_navBar showButtonsWithLeftTitle:nil rightTitle:@"Refresh" leftBack: YES];
+            if ([ _browser getSaved ] == NO) {
+                [_navBar showButtonsWithLeftTitle:nil 
+                         rightTitle:@"All Games" leftBack: YES];
+            } else {
+                [_navBar showButtonsWithLeftTitle:nil 
+                         rightTitle:@"Saved Games" leftBack: YES];
+            }
         }
     }
 }
@@ -217,6 +260,8 @@ int audioIsSpeaker;
         emuThread = -1;
         pthread_join(emulation_tid, NULL);
         dwKeySystem = 0;
+        SaveSRAM();
+        SaveState();
 }
 
 - (int)isBrowsing {
