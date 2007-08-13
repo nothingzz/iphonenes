@@ -39,12 +39,16 @@
 #include "InfoNES_System.h"
 #include "InfoNES_Mapper.h"
 #include "InfoNES_pAPU.h"
+#include "../InfoNES_iPhone.h"
 #include "K6502.h"
 #include <stdio.h>
 
 /*-------------------------------------------------------------------*/
 /*  NES resources                                                    */
 /*-------------------------------------------------------------------*/
+
+BYTE *pbyPrevBank[ 8 ];
+int pbyPrevBanks[ 8 ];
 
 /* RAM */
 BYTE RAM[ RAM_SIZE ];
@@ -442,6 +446,7 @@ int InfoNES_Reset()
   }
 
   // Set up a mapper initialization function
+  LOGDEBUG("Initializing mapper %d", nIdx);
   MapperTable[ nIdx ].pMapperInit();
 
   /*-------------------------------------------------------------------*/
@@ -541,6 +546,8 @@ void InfoNES_Mirroring( int nType )
   PPUBANK[ NAME_TABLE2 ] = &PPURAM[ PPU_MirrorTable[ nType ][ 2 ] * 0x400 ];
   PPUBANK[ NAME_TABLE3 ] = &PPURAM[ PPU_MirrorTable[ nType ][ 3 ] * 0x400 ];
 }
+
+extern char *fileName;
 
 /*===================================================================*/
 /*                                                                   */
@@ -1146,7 +1153,6 @@ void InfoNES_SetupChr()
   int nIdx;
   int nY;
   int nOff;
-  static BYTE *pbyPrevBank[ 8 ];
   int nBank;
 
   for ( nBank = 0; nBank < 8; ++nBank )
@@ -1185,6 +1191,7 @@ void InfoNES_SetupChr()
     }
     // Keep this address
     pbyPrevBank[ nBank ] = PPUBANK[ nBank ];
+    pbyPrevBanks [ nBank ] = nBank;
   }
 
   // Reset update flag

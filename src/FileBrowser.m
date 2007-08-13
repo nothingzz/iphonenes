@@ -86,15 +86,15 @@
         NSString *file;
         NSDirectoryEnumerator *dirEnum = [[NSFileManager defaultManager] enumeratorAtPath: _path];
 	while (file = [dirEnum nextObject]) {
-		if (_extensions != nil && [_extensions count] > 0) {
-			NSString *extension = [[file pathExtension] lowercaseString];
-			if ([_extensions containsObject: extension]) {
-				[_files addObject: file];
-			}
-		} else {
-			[_files addObject: file];
-		}
-	}
+            char *fn = [file cStringUsingEncoding: NSASCIIStringEncoding];
+            if (_saved) {
+                    if (!strcasecmp(fn + (strlen(fn)-4), ".sav")) 
+                        [_files addObject: file];
+            } else {
+                    if (!strcasecmp(fn + (strlen(fn)-4), ".nes"))
+                        [_files addObject: file];
+            }
+        }
 
 	//[_files sortUsingSelector:@selector(caseInsensitiveCompare:)];
 	_rowCount = [_files count];
@@ -126,4 +126,13 @@
 
 	return [_path stringByAppendingPathComponent: [_files objectAtIndex: [_table selectedRow]]];
 }
+
+- (void)setSaved:(BOOL)saved {
+    _saved = saved;
+}
+
+- (BOOL)getSaved {
+    return _saved;
+}
+
 @end

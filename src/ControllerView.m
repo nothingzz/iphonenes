@@ -21,6 +21,7 @@
 #import "ControllerView.h"
 #import "ScreenView.h"
 #import "MainView.h"
+#import "InfoNES_iPhone.h"
 
 extern unsigned long dwKeyPad1;
 
@@ -195,11 +196,7 @@ extern unsigned long dwKeyPad1;
         if (button)
             dwKeyPad1 |= button;
 
-#ifdef DEBUG
-        FILE *f = fopen("/tmp/NES.debug", "a");
-        fprintf(f, "ControllerView.mouseDown(%d) dwKeyPad1:%d\n", button, dwKeyPad1);
-        fclose(f);
-#endif
+        LOGDEBUG("ControllerView.mouseDown(%d) dwKeyPad1:%d", button, dwKeyPad1);
 }
 
 - (void)mouseDragged:(GSEvent *)event {
@@ -229,11 +226,7 @@ extern unsigned long dwKeyPad1;
             }
         }
 
-#ifdef DEBUG
-        FILE *f = fopen("/tmp/NES.debug", "a");
-        fprintf(f, "ControllerView.mouseDragged(%d) dwKeyPad1:%d\n", button, dwKeyPad1);
-        fclose(f);
-#endif
+        LOGDEBUG("ControllerView.mouseDragged(%d) dwKeyPad1:%d", button, dwKeyPad1);
 }
 - (void)mouseUp:(GSEvent *)event {
         int button = [self controllerButtonPressed: event];
@@ -246,11 +239,7 @@ extern unsigned long dwKeyPad1;
             else
                 dwKeyPad1 &= ~button;
 
-#ifdef DEBUG
-        FILE *f = fopen("/tmp/NES.debug", "a");
-        fprintf(f, "ControllerView.mouseUp(%d) dwKeyPad1:%d\n", button, dwKeyPad1);
-        fclose(f);
-#endif
+        LOGDEBUG("ControllerView.mouseUp(%d) dwKeyPad1:%d", button, dwKeyPad1);
 }
 
 @end

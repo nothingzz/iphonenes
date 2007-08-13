@@ -27,6 +27,7 @@
 	NSString *_path;
 	int _rowCount;
 	id _delegate;
+	BOOL _saved;
 }
 
 - (id)initWithFrame:(CGRect)rect;
@@ -38,5 +39,8 @@
 - (UITableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col;
 - (void)tableRowSelected:(NSNotification *)notification;
 - (NSString *)selectedFile;
+- (void)addExtension: (NSString *)extension;
+- (void)setSaved: (BOOL)saved;
+- (BOOL)getSaved;
 
 @end

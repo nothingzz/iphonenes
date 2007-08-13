@@ -16,6 +16,8 @@
 
 */
 
+#import "InfoNES/InfoNES_Types.h"
+
 #ifndef _INFONES_IPHONE_H
 #define _INFONES_IPHONE_H
 
@@ -32,5 +34,14 @@ void InfoNES_Wait();
 void InfoNES_MessageBox( char *pszMsg, ... );
 int InfoNES_Menu();
 void *emulation_thread(void *args);
+
+int LoadSRAM();
+int SaveSRAM();
+
+#ifndef DEBUG
+#define LOGDEBUG( ... );
+#else
+void LOGDEBUG (const char *err, ... );
+#endif
 
 #endif

@@ -1,6 +1,6 @@
 NES.app
 NES Emulator for iPhone
-Version 0.27
+Version 0.31
 SVN: http://svn.natetrue.com/nesapp
 
 Core: InfoNES Project (based on pNesX) 
@@ -27,7 +27,7 @@ COMPILING FROM SOURCE
 
 2. Place your ROM files in /var/root/Media/ROMs/NES
 
-KNOWN BUGS
+KNOWN ISSUES
 
   SOUND
   In order to have sound, you must disable mediaserverd, which is the iPhone's
@@ -63,6 +63,14 @@ KNOWN BUGS
   to have both speaker and earbud support. If, however, you would like much
   louder ear buds (and no speaker), resetting it with the earbuds in will
   have this effect.
+
+  SAVE STATE
+
+  NES.app automatically saves the state of your game when you click back to the
+  "ROMs List". You can choose to start a fresh game from the "All Games" menu,
+  or tap "Saved Games" and load your previously saved game. This feature is 
+  still somewhat buggy, and some games restore with a temporarily mangled 
+  character table, until you proceed to a new screen where they are re-loaded.
 
 DEBUG
 

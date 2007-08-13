@@ -62,10 +62,19 @@ extern char emuThread;
 
 - (BOOL)loadROM: (NSString *)path {
 	FILE *fp;
+        char fileName[strlen([path cStringUsingEncoding: NSASCIIStringEncoding])+1];
+        strcpy(fileName, [path cStringUsingEncoding: NSASCIIStringEncoding]);
+        strcpy(fileName + (strlen(fileName)-3), "nes");
+
+        LOGDEBUG("EmulationView.loadROM: Loading %s", fileName);
+
 	/* Open ROM file */
-	fp = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "rb" );
+	fp = fopen(fileName, "rb" );
 	if (fp == NULL)
-		return NO;
+            strcpy(fileName + (strlen(fileName)-3), "NES");
+        fp = fopen(fileName, "rb" );
+        if (fp == NULL)
+            return NO;
 
 	/* Read ROM Header */
 	fread(&NesHeader, sizeof(NesHeader), 1, fp);
