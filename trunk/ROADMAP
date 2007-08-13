@@ -1,6 +1,5 @@
 Things to do:
 
-- Implement Swipe-to-Delete for saved games
 - Fix remaining games with broken SaveState  
 - Implement auto-frame-skip
 - Implement preferences screen
