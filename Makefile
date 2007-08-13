@@ -12,10 +12,11 @@ LDFLAGS = -lobjc \
           -larmfp 
 
 #CFLAGS = -DDEBUG
+#CFLAGS = -DDELETE_ROMS
 
 all:	NES package
 
-NES:	src/main.o src/NESApp.o src/MainView.o src/FileBrowser.o src/EmulationView.o src/ScreenView.o src/InfoNES/K6502.o src/InfoNES/InfoNES.o src/InfoNES/InfoNES_Mapper.o src/InfoNES/InfoNES_pAPU.o src/InfoNES_iPhone.o src/ControllerView.o
+NES:	src/main.o src/NESApp.o src/MainView.o src/FileTable.o src/FileBrowser.o src/EmulationView.o src/ScreenView.o src/InfoNES/K6502.o src/InfoNES/InfoNES.o src/InfoNES/InfoNES_Mapper.o src/InfoNES/InfoNES_pAPU.o src/InfoNES_iPhone.o src/ControllerView.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
 %.o:	%.m

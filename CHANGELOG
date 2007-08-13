@@ -34,3 +34,8 @@ CHANGELOG
 0.30	[nervegas] Fixed SaveState for many games, +Mapper1 +Mapper5
                    This fixed Tetris, Bubble Bobble, Super Mario 2, others...
 0.31	[nervegas] Fixed SaveState for Mapper4 games (Earth Bound Zero, etc)
+0.32	[nervegas] Added delete option for saved games
+0.33	[nervegas] Fixes to orientation changes on select menus
+0.34	[nervegas] Fixes to mapper4 restore state (fixes Super Mario 3, others)
+0.35	[nervegas] Implemented swipe-to-delete for saved games
+
