@@ -16,6 +16,7 @@
 
 */
 
+#import "FileTable.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -36,7 +37,7 @@
 - (void)reloadData;
 - (void)setDelegate:(id)delegate;
 - (int)numberOfRowsInTable:(UITable *)table;
-- (UITableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col;
+- (UIDeletableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col;
 - (void)tableRowSelected:(NSNotification *)notification;
 - (NSString *)selectedFile;
 - (void)addExtension: (NSString *)extension;

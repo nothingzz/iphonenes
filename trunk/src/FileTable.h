@@ -18,29 +18,28 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <UIKit/UITransitionView.h>
-#import "FileBrowser.h"
-#import "EmulationView.h"
+#import "InfoNES_iPhone.h"
 
-char *fileName;
-
-@interface MainView : UIView 
+@interface FileTable : UITable
 {
-	UINavigationBar *_navBar;
-	UITransitionView *_transitionView;
-	FileBrowser *_browser;
-	EmulationView *_emuView;
-	BOOL _browsing;
-        CGRect _rect;
-        pthread_t emulation_tid;
+    BOOL _allowDelete;
 }
 
-- (id)initWithFrame:(CGRect)frame;
-- (void)dealloc;
-- (void)deviceOrientationChanged;
-- (void)startEmulator;
-- (void)stopEmulator;
-- (int)isBrowsing;
-- (void)setNavBar;
+- (void)allowDelete:(BOOL)allow;
+
+@end
+
+
+@interface UIDeletableCell : UITableCell 
+{
+    UITable *_table;
+    NSString *_path;
+    NSMutableArray *_files; 
+}
+
+- (void)setTable:(UITable *)table;
+- (void)setFiles:(NSMutableArray *)_files;
+- (void)setPath: (NSString *)path;
+- (NSString *)path;
 
 @end

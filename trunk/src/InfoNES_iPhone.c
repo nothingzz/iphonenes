@@ -233,7 +233,6 @@ void InfoNES_LoadFrame() {
     pthread_mutex_lock(&screenUpdateMutex);
 
     if (__screenOrientation == 3) {
-
         for (y=0; y < 240; y++)
         {
             for (x=0; x<256; x++) {
@@ -243,7 +242,6 @@ void InfoNES_LoadFrame() {
             }
         }
     } else {
-
         for (y=0; y < 240; y++)
         {
             for (x=0; x<256; x++) {
@@ -734,6 +732,7 @@ int LoadState()
       fread(&Map4_IRQ_Request, sizeof(Map4_IRQ_Request), 1, fp);
       fread(&Map4_IRQ_Present, sizeof(Map4_IRQ_Present), 1, fp);
       fread(&Map4_IRQ_Present_Vbl, sizeof(Map4_IRQ_Present_Vbl), 1, fp);
+      Map4_Set_CPU_Banks();
   } else if (MapperNo == 5) {
       fread(&Map5_Wram, sizeof(Map5_Wram), 1, fp);
       fread(&Map5_Ex_Ram, sizeof(Map5_Ex_Ram), 1, fp);

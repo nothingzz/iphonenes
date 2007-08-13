@@ -17,7 +17,7 @@
 */
 
 #import "FileBrowser.h"
-#import <UIKit/UISimpleTableCell.h>
+#import "FileTable.h"
 
 @implementation FileBrowser 
 - (id)initWithFrame:(struct CGRect)frame{
@@ -28,12 +28,17 @@
 			width: frame.size.width
 		];
 
-		_table = [[UITable alloc] initWithFrame: CGRectMake(0, 0, frame.size.width, frame.size.height)];
-		[_table addTableColumn: col];
-		[_table setSeparatorStyle: 1];
-		[_table setDelegate: self];
-		[_table setDataSource: self];
-
+		_table = [[FileTable alloc] initWithFrame: CGRectMake(0, 0, frame.size.width, frame.size.height)];
+		[ _table addTableColumn: col ];
+		[ _table setSeparatorStyle: 1 ];
+		[ _table setDelegate: self ];
+		[ _table setDataSource: self ];
+#ifdef DELETE_ROMS
+                [ _table allowDelete: YES ];
+#else
+                [ _table allowDelete: NO ];
+#endif
+                
 		_extensions = [[NSMutableArray alloc] init];
 		_files = [[NSMutableArray alloc] init];
 		_rowCount = 0;
@@ -109,9 +114,25 @@
 	return _rowCount;
 }
 
-- (UITableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col {
-	UISimpleTableCell *cell = [[UISimpleTableCell alloc] init];
-	[cell setTitle: [[_files objectAtIndex: row] stringByDeletingPathExtension]];
+- (UIDeletableCell *)table:(UITable *)table cellForRow:(int)row column:(UITableColumn *)col {
+	UIDeletableCell *cell = [[UIDeletableCell alloc] init];
+
+        UITextLabel *descriptionLabel = [[UITextLabel alloc] 
+            initWithFrame:CGRectMake(5.0f, 3.0f, 210.0f, 40.0f)];
+
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        float whiteComponents[4] = {1, 1, 1, 1};
+        float transparentComponents[4] = {0, 0, 0, 0};
+
+        [ descriptionLabel setText:[[_files objectAtIndex: row] stringByDeletingPathExtension ]];
+        [ descriptionLabel setWrapsText: YES ];
+        [ descriptionLabel setBackgroundColor:CGColorCreate(colorSpace, transparentComponents) ];
+
+        [ cell addSubview: descriptionLabel ];
+        [ cell setTable: _table ];
+        [ cell setFiles: _files ];
+        [ cell setPath: _path ];
+
 	return cell;
 }
 
@@ -129,6 +150,9 @@
 
 - (void)setSaved:(BOOL)saved {
     _saved = saved;
+#ifndef DELETE_ROMS
+    [ _table allowDelete: saved ];
+#endif
 }
 
 - (BOOL)getSaved {
