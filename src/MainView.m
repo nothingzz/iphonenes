@@ -37,6 +37,8 @@ int audioIsSpeaker;
 
         [UIHardware setSpeakerPhoneEnabled: YES];
           
+        _browsing = YES;
+
         if (screenOrientation != 3) {
             offset = 48.0;
             _navBar = [[UINavigationBar alloc] initWithFrame:
@@ -44,8 +46,7 @@ int audioIsSpeaker;
             ];
 
             [_navBar setDelegate: self];
-            [_navBar showButtonsWithLeftTitle:nil rightTitle:
-                @"All Games" leftBack: YES];
+            [ self setNavBar ];
             [_navBar enableAnimation];
         }
 
@@ -57,9 +58,11 @@ int audioIsSpeaker;
         _browser = [[FileBrowser alloc] initWithFrame:
             CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
         ];
-        [ _browser setSaved: NO];
-        [_browser setPath:@"/var/root/Media/ROMs/NES/"];
-        [_browser setDelegate: self];
+
+
+        [ _browser setSaved: NO ];
+        [ _browser setPath:@"/var/root/Media/ROMs/NES/" ];
+        [ _browser setDelegate: self ];
 
         _emuView = [[EmulationView alloc] initWithFrame:
             CGRectMake(0, 0, rect.size.width, rect.size.height - offset)
@@ -70,7 +73,6 @@ int audioIsSpeaker;
         [self addSubview: _navBar];
         [self addSubview: _transitionView];
         [_transitionView transition:1 toView:_browser];
-        _browsing = YES;
         _rect = rect;
     }
     return self;
@@ -79,14 +81,14 @@ int audioIsSpeaker;
 - (void)dealloc {
         int screenOrientation = [UIHardware deviceOrientation: YES];
 
-	[_browser release];
+	[ _browser release ];
         if (screenOrientation == 3)
-            [_navBar release];
-	[super dealloc];
+            [ _navBar release ];
+	[ super dealloc ];
 }
 
 - (void)alertSheet:(UIAlertSheet *)sheet buttonClicked:(int)button {
-	[sheet dismiss];
+	[ sheet dismiss ];
 }
 
 - (void)navigationBar:(UINavigationBar *)navbar buttonClicked:(int)button {
@@ -100,57 +102,34 @@ int audioIsSpeaker;
         if (_browsing) {
             if ([ _browser getSaved ] == NO) {
                 [ _browser setSaved: YES];
-                [_navBar showButtonsWithLeftTitle:nil 
-                         rightTitle:@"Saved Games" leftBack: YES
-                ];
             } else {
                 [_browser setSaved: NO];
-                [_navBar showButtonsWithLeftTitle:nil 
-                         rightTitle:@"All Games" leftBack: YES
-                ];
             }
-            [_browser reloadData];
+            [ self setNavBar ];
+            [ _browser reloadData ];
 
         } else {
-            InfoNES_SoundClose();
-            if (!audioIsSpeaker) {
-                [UIHardware setSpeakerPhoneEnabled: YES];
-                audioIsSpeaker = 1;
-                if (screenOrientation != 3)
-                    [_navBar showButtonsWithLeftTitle:@"ROM List" 
-                             rightTitle:@"Speaker" leftBack: YES];
-            } else {
-                [UIHardware setSpeakerPhoneEnabled: NO];
-                audioIsSpeaker = 0;
-                if (screenOrientation != 3)
-                    [_navBar showButtonsWithLeftTitle:@"ROM List" 
-                             rightTitle:@"Headset" leftBack: YES
-                    ];
-            }
-            InfoNES_SoundOpen(0, 0);
+                InfoNES_SoundClose();
+                if (!audioIsSpeaker) {
+                    [UIHardware setSpeakerPhoneEnabled: YES];
+                    audioIsSpeaker = 1;
+                } else {
+                    [UIHardware setSpeakerPhoneEnabled: NO];
+                    audioIsSpeaker = 0;
+                }
+                InfoNES_SoundOpen(0, 0);
+
+                [ self setNavBar ];
         }
         break;
 
         /* Left Nav Button */
 
         case 1:	
-        if (!_browsing) {
             _browsing = YES;
             [self stopEmulator];
             [_transitionView transition:2 toView:_browser];
-            if (screenOrientation != 3) {
-                if ([ _browser getSaved ] == NO) {
-                    [_navBar showButtonsWithLeftTitle:nil 
-                             rightTitle:@"All Games" leftBack: YES
-                    ];
-                } else {
-                    [_navBar showButtonsWithLeftTitle:nil 
-                             rightTitle:@"Saved Games" leftBack: YES
-                    ];
-                }
-
-            }
-        }
+        [ self setNavBar ];
         break;
 
     }
@@ -164,17 +143,10 @@ int audioIsSpeaker;
         strcpy(fileName, [file cStringUsingEncoding: NSASCIIStringEncoding]);
 
         [_transitionView transition:1 toView:_emuView];
-        if (screenOrientation != 3) {
-            if (!audioIsSpeaker) {
-                [_navBar showButtonsWithLeftTitle:@"ROM List" 
-                         rightTitle:@"Headset" leftBack: YES];
-            } else {
-                [_navBar showButtonsWithLeftTitle:@"ROM List" 
-                         rightTitle:@"Speaker" leftBack: YES];
-            }
-        }
         _browsing = NO;
         [self startEmulator];
+
+        [ self setNavBar ];
 
     } else {
         UIAlertSheet *sheet = [[UIAlertSheet alloc] initWithFrame: CGRectMake(0, 240, 320, 240)];
@@ -206,6 +178,8 @@ int audioIsSpeaker;
     ];
     [_newBrowser setPath:@"/var/root/Media/ROMs/NES/"];
     [_newBrowser setDelegate: self];
+    [_newBrowser setSaved: [_browser getSaved]];
+    [_newBrowser reloadData];
 
     _transitionView = [[UITransitionView alloc] initWithFrame:
             CGRectMake(_rect.origin.x, offset, 
@@ -229,24 +203,7 @@ int audioIsSpeaker;
         [ _navBar removeFromSuperview ];
     } else {
         [ self addSubview: _navBar ];
-
-        if (!_browsing) {
-            if (!audioIsSpeaker) {
-                [_navBar showButtonsWithLeftTitle:@"ROM List" 
-                         rightTitle:@"Headset" leftBack: YES];
-            } else {
-                [_navBar showButtonsWithLeftTitle:@"ROM List" 
-                         rightTitle:@"Speaker" leftBack: YES];
-            }
-        } else {
-            if ([ _browser getSaved ] == NO) {
-                [_navBar showButtonsWithLeftTitle:nil 
-                         rightTitle:@"All Games" leftBack: YES];
-            } else {
-                [_navBar showButtonsWithLeftTitle:nil 
-                         rightTitle:@"Saved Games" leftBack: YES];
-            }
-        }
+        [ self setNavBar ];
     }
 }
 
@@ -266,6 +223,34 @@ int audioIsSpeaker;
 
 - (int)isBrowsing {
 	return _browsing;
+}
+
+- (void)setNavBar {
+    int screenOrientation = [UIHardware deviceOrientation: YES];
+
+    if (screenOrientation == 3)
+        return;
+    
+    if (_browsing == YES) {
+            if ([ _browser getSaved ] == NO) {
+                [_navBar showButtonsWithLeftTitle:nil
+                         rightTitle:@"Show: All Games" leftBack: YES
+                ];
+            } else {
+                [_navBar showButtonsWithLeftTitle:nil
+                         rightTitle:@"Show: Saved Games" leftBack: YES
+                ];
+            }
+    } else if (_browsing == NO) {
+        if (!audioIsSpeaker) {
+                [_navBar showButtonsWithLeftTitle:@"ROM List"
+                         rightTitle:@"Sound: Headset" leftBack: YES];
+        } else {
+                [_navBar showButtonsWithLeftTitle:@"ROM List"
+                         rightTitle:@"Sound: Speaker" leftBack: YES
+                ];
+        }
+    }
 }
 
 @end
