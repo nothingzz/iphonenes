@@ -69,18 +69,16 @@
 
     LOGDEBUG("UIDeletableCell._willBeDeleted: %s", fn);
  
-    if (!strcmp(fn + (strlen(fn)-4), ".sav"))
+    if ((!strcmp(fn + (strlen(fn)-4), ".sav"))
+     || (!strcasecmp(fn + (strlen(fn)-4), ".nes")))
+    {
         unlink(fn);
-
-#ifdef DELETE_ROMS
-    if (!strcasecmp(fn + (strlen(fn)-4), ".nes"))
-        unlink(fn);
-#endif
+    }
     
     
 }
 
-- (void)setTable:(UITable *)table {
+- (void)setTable:(FileTable *)table {
     _table = table;
 }
 

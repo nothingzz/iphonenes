@@ -39,6 +39,8 @@
 }
 
 - (void)applicationWillTerminate {
+        [ _mainView savePreferences ];
+        [ _mainView stopEmulator ];
 	[_window release];
 }
 
@@ -50,7 +52,7 @@
     {
         _screenOrientation = screenOrientation; 
 
-        [self setStatusBarMode: ((screenOrientation == 3 && _mainView && [ _mainView isBrowsing ] != YES) ? 1 : 0) duration: 0];
+        [ self setStatusBarMode: ((screenOrientation == 3 && _mainView && [ _mainView isBrowsing ] != YES) ? 1 : 0) duration: 0 ];
 
         if (screenOrientation)
              [_mainView deviceOrientationChanged];

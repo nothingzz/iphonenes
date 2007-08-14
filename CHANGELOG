@@ -38,4 +38,10 @@ CHANGELOG
 0.33	[nervegas] Fixes to orientation changes on select menus
 0.34	[nervegas] Fixes to mapper4 restore state (fixes Super Mario 3, others)
 0.35	[nervegas] Implemented swipe-to-delete for saved games
-
+0.36	[nervegas] Minor UI tweaks
+0.37	[nervegas] Added working preference pane, reworked nagivation bar
+0.38	[nervegas] Fixed default sound preference issues
+        [nervegas] Save game state and preferences on "home" button press
+        [nervegas] Fixed rom deletion (would delete from list, but not file)
+0.39	[nervegas] Implemented preference groupings
+0.40	[nervegas] Added auto-save preference to disable auto-save state

@@ -91,3 +91,23 @@
   }
   
   + (void)_setStatusBarHeight:(float)fp8;	// IMP=0x323e86e0
+
+*** ./UIKit/UISliderControl.h   Sat Jul 28 21:02:52 2007
+--- /usr/local/arm-apple-darwin/include/UIKit/UISliderControl.h   Mon Aug 13 17:33:32 2007
+***************
+*** 77,83 ****
+  - (void)setValue:(float)fp8 animated:(BOOL)fp12 animationCurve:(int)fp16;     // IMP=0x32449dbc
+  - (struct CGRect)sliderBounds;        // IMP=0x32449ff0
+  - (void)sliderBoundsChanged;  // IMP=0x324496c4
+! - (float)value;       // IMP=0x32449fe8
+  - (struct CGRect)valueTextBounds;     // IMP=0x3244aee4
+  
+  @end
+--- 77,83 ----
+  - (void)setValue:(float)fp8 animated:(BOOL)fp12 animationCurve:(int)fp16;     // IMP=0x32449dbc
+  - (struct CGRect)sliderBounds;        // IMP=0x32449ff0
+  - (void)sliderBoundsChanged;  // IMP=0x324496c4
+! - (long)value;        // IMP=0x32449fe8
+  - (struct CGRect)valueTextBounds;     // IMP=0x3244aee4
+  
+  @end

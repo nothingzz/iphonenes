@@ -33,11 +33,10 @@
 		[ _table setSeparatorStyle: 1 ];
 		[ _table setDelegate: self ];
 		[ _table setDataSource: self ];
-#ifdef DELETE_ROMS
-                [ _table allowDelete: YES ];
-#else
-                [ _table allowDelete: NO ];
-#endif
+                if (_allowDeleteROMs == YES)
+                    [ _table allowDelete: YES ];
+                else
+                    [ _table allowDelete: NO ];
                 
 		_extensions = [[NSMutableArray alloc] init];
 		_files = [[NSMutableArray alloc] init];
@@ -150,13 +149,17 @@
 
 - (void)setSaved:(BOOL)saved {
     _saved = saved;
-#ifndef DELETE_ROMS
-    [ _table allowDelete: saved ];
-#endif
+    if (_allowDeleteROMs == NO)
+        [ _table allowDelete: saved ];
 }
 
 - (BOOL)getSaved {
     return _saved;
+}
+
+- (void)setAllowDeleteROMs: (BOOL)allow {
+    _allowDeleteROMs = allow;
+    [ _table allowDelete: allow ];
 }
 
 @end

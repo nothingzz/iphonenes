@@ -32,12 +32,12 @@
 
 @interface UIDeletableCell : UITableCell 
 {
-    UITable *_table;
+    FileTable *_table;
     NSString *_path;
     NSMutableArray *_files; 
 }
 
-- (void)setTable:(UITable *)table;
+- (void)setTable:(FileTable *)table;
 - (void)setFiles:(NSMutableArray *)_files;
 - (void)setPath: (NSString *)path;
 - (NSString *)path;
