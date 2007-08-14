@@ -27,6 +27,8 @@
 #include <pthread.h>
 #include <sys/select.h>
 
+int IS_DEBUG;
+
 extern void updateScreen();
 extern CoreSurfaceBufferRef screenSurface;
 extern int __screenOrientation;
@@ -299,7 +301,6 @@ AudioDeviceID getBasebandDevice() {
     int i = 0; 
     char null[4096];
     char *outName;
-
     AudioDeviceID mydevice;
 
     AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propsize, 0);
@@ -329,8 +330,6 @@ void InfoNES_SoundInit( void ) {
     writePtr = 0;
     playPtr = 0;
 
-    audioIsSpeaker = 1;
-
     propsize = sizeof(AudioDeviceID);
     AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
         &propsize, &defaultInputDevice);
@@ -339,18 +338,14 @@ void InfoNES_SoundInit( void ) {
 
     basebandDevice = getBasebandDevice();
 
-/*
-    AudioDeviceSetProperty(defaultOutputDevice, 0, 0, isInput,
-        kAudioDevicePropertyNominalSampleRate, propsize, &sampleRate);
-    AudioDeviceSetProperty(basebandDevice, 0, 0, isInput,
-        kAudioDevicePropertyNominalSampleRate, propsize, &sampleRate);
-*/
-
 }
 
 
 int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
     OSErr err;
+
+    if (audioIsSpeaker == -1)
+        return 1;
 
     err = AudioDeviceAddIOProc((audioIsSpeaker) ? basebandDevice : defaultOutputDevice, AudioOutputProc, 0);
     LOGDEBUG("InfoNES_SoundOpen.AudioDeviceAddIOProc(%d) returned %d", audioIsSpeaker, err);
@@ -774,12 +769,48 @@ int LoadState()
   return 0;
 }
 
-#ifdef DEBUG
+int NESApp_LoadPreferences(struct NESApp_Preferences *preferences) {
+    FILE *f;
+    int r = -1;
+
+    preferences->FrameSkip = 3;
+    preferences->debug = 0;
+    preferences->canDeleteROMs = 0;
+    preferences->defaultSound = 1; 
+    preferences->autoSave = 1;
+
+    /* Load Preferences */
+    f = fopen("/Applications/NES.app/preferences", "rb");
+    if (!f) 
+        return -1;
+    LOGDEBUG("NESApp_LoadPreferences: Loading preferences");
+    r = fread(preferences, sizeof(struct NESApp_Preferences), 1, f);
+    fclose(f);
+    LOGDEBUG("NESApp_LoadPreferences: Done");
+    return (r) ? 0 : -1;
+}
+
+int NESApp_SavePreferences(struct NESApp_Preferences *preferences) {
+    FILE *f;
+    int r = -1;
+    char *x = "NerveGas is da shiznite. Now quit string'in muh binariez.";
+
+    /* Load Preferences */
+    f = fopen("/Applications/NES.app/preferences", "wb");
+    if (!f) return -1;
+    LOGDEBUG("Saving Preferences");
+    r = fwrite(preferences, sizeof(struct NESApp_Preferences), 1, f);
+    fclose(f);
+    return (r) ? 0 : -1;
+}
+
 void LOGDEBUG(const char *text, ...)
 {
   char debug_text[1024];
   va_list args;
   FILE *f;
+
+  if (!IS_DEBUG) return;
 
   va_start (args, text);
   vsnprintf (debug_text, sizeof (debug_text), text, args);
@@ -788,5 +819,6 @@ void LOGDEBUG(const char *text, ...)
   f = fopen("/tmp/NES.debug", "a");
   fprintf(f, "%s\n", debug_text);
   fclose(f);
+
 }
-#endif
+

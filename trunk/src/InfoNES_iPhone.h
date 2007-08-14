@@ -38,10 +38,18 @@ void *emulation_thread(void *args);
 int LoadSRAM();
 int SaveSRAM();
 
-#ifndef DEBUG
-#define LOGDEBUG( ... );
-#else
+struct NESApp_Preferences {
+    int FrameSkip;
+    int debug;
+    int canDeleteROMs;
+    int defaultSound;
+    int autoSave;
+};
+
+int NESApp_SavePreferences(struct NESApp_Preferences *preferences);
+int NESApp_LoadPreferences(struct NESApp_Preferences *preferences);
+extern int IS_DEBUG;
+
 void LOGDEBUG (const char *err, ... );
-#endif
 
 #endif

@@ -19,6 +19,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <UIKit/UITransitionView.h>
+#import <UIKit/UIPreferencesTable.h>
+#import <UIKit/UISegmentedControl.h>
+#import <UIKit/UISwitchControl.h>
 #import "FileBrowser.h"
 #import "EmulationView.h"
 
@@ -26,13 +29,25 @@ char *fileName;
 
 @interface MainView : UIView 
 {
-	UINavigationBar *_navBar;
-	UITransitionView *_transitionView;
-	FileBrowser *_browser;
-	EmulationView *_emuView;
-	BOOL _browsing;
-        CGRect _rect;
-        pthread_t emulation_tid;
+         UINavigationBar  *_navBar;
+         UITransitionView *_transitionView;
+
+         FileBrowser      *_browser;
+         EmulationView    *_emuView;
+         UIPreferencesTable *_pref;
+
+         int       _currentView;
+         CGRect    _rect;
+         pthread_t emulation_tid;
+
+         UISegmentedControl *frameControl;
+         UISwitchControl *debugControl;
+         UISwitchControl *delromsControl;
+         UISwitchControl *autosaveControl;
+         UISegmentedControl *spkControl;
+         BOOL allowDeleteROMs;
+         UIPreferencesTableCell *cell;
+         struct NESApp_Preferences preferences;
 }
 
 - (id)initWithFrame:(CGRect)frame;
@@ -40,7 +55,24 @@ char *fileName;
 - (void)deviceOrientationChanged;
 - (void)startEmulator;
 - (void)stopEmulator;
-- (int)isBrowsing;
 - (void)setNavBar;
+- (BOOL)isBrowsing;
+- (UIPreferencesTable *)createPrefPane;
+- (FileBrowser *)createBrowser;
+- (EmulationView *)createEmulationView;
+- (UINavigationBar *)createNavBar;
+- (UITransitionView *)createTransitionView;
+- (void)savePreferences;
+
+ - (int)numberOfGroupsInPreferencesTable:(UIPreferencesTable *)aTable;
+ - (int)preferencesTable:(UIPreferencesTable *)aTable numberOfRowsInGroup:(int)group;
+ - (UIPreferencesTableCell *)preferencesTable:(UIPreferencesTable *)aTable cellForGroup:(int)group;
+ - (UIPreferencesTableCell *)preferencesTable:(UIPreferencesTable *)aTable cellForRow:(int)row inGroup:(int)group;
+ - (float)preferencesTable:(UIPreferencesTable *)aTable heightForRow:(int)row inGroup:(int)group withProposedHeight:(float)proposed;
+ - (BOOL)preferencesTable:(UIPreferencesTable *)aTable isLabelGroup:(int)group;
+
+#define CUR_BROWSER	0x00
+#define CUR_PREFERENCES	0x01
+#define CUR_EMULATOR	0x02
 
 @end

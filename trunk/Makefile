@@ -11,8 +11,7 @@ LDFLAGS = -lobjc \
           -framework CoreAudio \
           -larmfp 
 
-#CFLAGS = -DDEBUG
-#CFLAGS = -DDELETE_ROMS
+CFLAGS = -DVERSION='"Version 0.40"'
 
 all:	NES package
 

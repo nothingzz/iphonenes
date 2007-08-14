@@ -1,12 +1,12 @@
 NES.app
 NES Emulator for iPhone
-Version 0.35
+Version 0.40
 SVN: http://svn.natetrue.com/nesapp
 
 Core: InfoNES Project (based on pNesX) 
 Code: nervegas, stepwhite 
 Cool: nightwatch (CoreSurfaces), bwhiteman (CoreAudio), dshadow (General)
-      wheat-_ (Icon)
+      wheat-_ (Icon), lg (Pref Groups)
 
 COMPILING FROM SOURCE
 
@@ -66,19 +66,18 @@ KNOWN ISSUES
 
   SAVE STATE
 
-  NES.app automatically saves the state of your game when you click back to the
-  "ROMs List". You can choose to start a fresh game from the "All Games" menu,
-  or tap "Saved Games" and load your previously saved game. This feature is 
+  NES.app automatically saves the state of your game when you leave the game.
+  You can choose to start a fresh game from the "All Games" menu, or tap 
+  "Saved Games" and load your previously saved game. This feature is 
   still somewhat buggy, and some games restore with a temporarily mangled 
   character table, until you proceed to a new screen where they are re-loaded.
 
 DEBUG
 
-Compiling with -DDEBUG (see Makefile) will enable debugging to be sent to
-/tmp/NES.debug. At the moment, this is only recording some activity.
+  Debugging writes debugging output to /tmp/NES.debug
 
-Debug also causes the hotspots on the screen to be drawn in vivid colors, for
-debugging the controls.
+  Debug also causes the hotspots on the screen to be drawn in vivid colors, for
+  debugging the controls.
 
 LICENSE
 

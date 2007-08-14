@@ -87,7 +87,7 @@ extern unsigned long dwKeyPad1;
 	[_controllerImage draw1PartImageInRect: rect2];
 
 	
-#ifdef DEBUG
+        if (IS_DEBUG) {
 	CGContextRef ctx = UICurrentContext();
 	float red[4] = {1, 0, 0, 1};
 	float green[4] = {0, 1, 0, 1};
@@ -109,7 +109,7 @@ extern unsigned long dwKeyPad1;
 	CGContextFillRect(ctx, Start);
 	CGContextFillRect(ctx, A);
 	CGContextFillRect(ctx, B);
-#endif
+        }
 
 	[self fixRects];
 }

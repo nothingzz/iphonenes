@@ -1,9 +1,7 @@
 Things to do:
 
 - Fix remaining games with broken SaveState  
-- Implement auto-frame-skip
-- Implement preferences screen
 - Implement net play
 - Implement genie game codes
-- Fix remaining sound issues
+- Fix remaining sound issues (mediaserverd, etc)
 - Fix / Rewrite Core to use contexts instead of globals

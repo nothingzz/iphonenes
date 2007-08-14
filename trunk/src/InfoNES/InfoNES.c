@@ -393,7 +393,7 @@ int InfoNES_Reset()
   InfoNES_MemorySet( RAM, 0, sizeof RAM );
 
   // Reset frame skip and frame count
-  FrameSkip = 3;
+//  FrameSkip = 3;
   FrameCnt = 0;
 
 #if 0

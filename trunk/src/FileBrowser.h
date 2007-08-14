@@ -29,6 +29,7 @@
 	int _rowCount;
 	id _delegate;
 	BOOL _saved;
+        BOOL _allowDeleteROMs;
 }
 
 - (id)initWithFrame:(CGRect)rect;
@@ -43,5 +44,6 @@
 - (void)addExtension: (NSString *)extension;
 - (void)setSaved: (BOOL)saved;
 - (BOOL)getSaved;
+- (void)setAllowDeleteROMs: (BOOL)allow;
 
 @end
